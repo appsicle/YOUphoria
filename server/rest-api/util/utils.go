@@ -1,3 +1,0 @@
-/*
-	helpful utility functions
-*/

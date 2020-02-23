@@ -1,3 +1,0 @@
-/*
-	everything else user related
-*/
