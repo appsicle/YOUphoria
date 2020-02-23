@@ -9,6 +9,7 @@ class CurrentMood extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: color,
+      child: Text('this is the current mood screen'),
     );
   }
 }

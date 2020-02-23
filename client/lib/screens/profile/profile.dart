@@ -9,6 +9,7 @@ class Profile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: color,
+      child: Text('this is the profile screen'),
     );
   }
 }
