@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import './newMood.dart';
 
 class CurrentMood extends StatelessWidget {
   @override
@@ -19,7 +20,6 @@ class AddMood extends StatelessWidget {
         child: CupertinoButton(
             onPressed: () {
               // Add your onPressed code here!
-              debugDumpApp();
               Navigator.of(context).push(CupertinoPageRoute(
                 builder: (context) => NewMood(),
               ));
@@ -31,35 +31,3 @@ class AddMood extends StatelessWidget {
   }
 }
 
-class NewMood extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Aasdasd Mood'),
-      ),
-      child: Center(
-        child: Text('sadf'),
-      ),
-      backgroundColor: CupertinoColors.lightBackgroundGray,
-    );
-  }
-}
-
-// class StarDisplay extends StatelessWidget {
-//   final int value;
-//   const StarDisplay({Key key, this.value = 0})
-//       : assert(value != null),
-//         super(key: key);
-//   @override
-//   Widget build(BuildContext context) {
-//     return Row(
-//       // mainAxisSize: MainAxisSize.min,
-//       children: List.generate(5, (index) {
-//         return Icon(
-//           index < value ? Icons.star : Icons.star_border,
-//         );
-//       }),
-//     );
-//   }
-// }
