@@ -19,6 +19,7 @@ class AddMood extends StatelessWidget {
         child: CupertinoButton(
             onPressed: () {
               // Add your onPressed code here!
+              debugDumpApp();
               Navigator.of(context).push(CupertinoPageRoute(
                 builder: (context) => NewMood(),
               ));
@@ -35,9 +36,11 @@ class NewMood extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: Text('Add Mood'),
+        middle: Text('Aasdasd Mood'),
       ),
-      child: CupertinoButton(child: Text('testtt'), onPressed: null,),
+      child: Center(
+        child: Text('sadf'),
+      ),
       backgroundColor: CupertinoColors.lightBackgroundGray,
     );
   }
