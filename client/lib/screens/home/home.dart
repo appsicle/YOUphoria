@@ -1,52 +1,38 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../calendar/calendar.dart';
 import '../profile/profile.dart';
 import '../currentMood/currentMood.dart';
 
-class Home extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() {
-    return _HomeState();
-  }
-}
+class Home extends StatelessWidget {
+  static const String iconFont = 'CupertinoIcons';
 
-class _HomeState extends State<Home> {
-  int _currentIndex = 1; // track current index of selected tab
-  List<Widget> _children = [
-    Calendar(Colors.blue),
-    CurrentMood(Colors.yellow),
-    Profile(Colors.red)
-  ]; // list of widgets to render based on the currently selected tab
+  /// The dependent package providing the Cupertino icons font.
+  static const String iconFontPackage = 'cupertino_icons';
+  static const IconData calendar =
+      IconData(0xf2d1, fontFamily: iconFont, fontPackage: iconFontPackage);
+  static const IconData mood =
+      IconData(0xf38e, fontFamily: iconFont, fontPackage: iconFontPackage);
+  static const IconData profile =
+      IconData(0xf419, fontFamily: iconFont, fontPackage: iconFontPackage);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Corgis Rule'),
-      ),
-      body: _children[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        onTap: onTabTapped,
-        currentIndex: _currentIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.calendar_today),
-            title: new Text('Calendar'),
-          ),
-          BottomNavigationBarItem(
-            icon: new Icon(Icons.mood),
-            title: new Text('Mood'),
-          ),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), title: Text('Profile'))
-        ],
-      ),
+    return CupertinoTabScaffold(
+      tabBar: CupertinoTabBar(items: [
+        BottomNavigationBarItem(icon: Icon(calendar), title: Text('Calendar')),
+        BottomNavigationBarItem(icon: Icon(mood), title: Text('Mood')),
+        BottomNavigationBarItem(icon: Icon(profile), title: Text('Profile'))
+      ]),
+      tabBuilder: (context, index) {
+        if (index == 0) {
+          return CupertinoTabView(builder: (context) => Calendar());
+        } else if (index == 1) {
+          return CupertinoTabView(builder: (context) => CurrentMood());
+        } else {
+          return CupertinoTabView(builder: (context) => Profile());
+        }
+      },
     );
-  }
-
-  void onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
   }
 }
