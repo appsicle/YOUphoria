@@ -36,6 +36,7 @@ class TitleSection extends StatelessWidget {
   }
 }
 
+// TODO make this take in data about user's moods for current day and display somehow
 class MoodDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
