@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
-import './recommendation.dart';
 import './happinessData.dart';
+import 'package:ndialog/ndialog.dart';
 
 class NewMood extends StatelessWidget {
   @override
@@ -12,13 +12,13 @@ class NewMood extends StatelessWidget {
         middle: Text('Add Mood'),
       ),
       child: Center(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Expanded(
+            Container(
               child: Moods(),
             ),
-            Expanded(
+            Container(
               child: MoodSlider(),
             ),
           ],
@@ -40,17 +40,17 @@ class SliderState extends State<MoodSlider> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         FractionallySizedBox(
-          heightFactor: .7,
+          widthFactor: .95,
           child: Container(
             alignment: Alignment.center,
             child: FlutterSlider(
-              rtl: true,
-              axis: Axis.vertical,
+              rtl: false,
+              axis: Axis.horizontal,
               values: [50],
               max: 100,
               min: 0,
@@ -63,22 +63,22 @@ class SliderState extends State<MoodSlider> {
           ),
         ),
         Container(
-          width: 125,
-          padding: EdgeInsets.only(right: 20),
+          width: 200,
+          padding: EdgeInsets.all(20.0),
           child: CupertinoButton(
             minSize: 60,
-            padding: EdgeInsets.zero,
+            padding: EdgeInsets.all(15.0),
             borderRadius: BorderRadius.circular(15.0),
             onPressed: () {
-              print(_moodValue);
+              // print(_moodValue);
               if (_moodValue >= _threshold) {
                 goToHappinessDataScreen();
               } else {
-                goToRecommendationScreen();
+                goToRecommendationPopup();
               }
             },
-            color: Colors.black54,
-            child: Text("SUBMIT"),
+            color: Colors.cyan,
+            child: Text("SUBMIT MOOD"),
           ),
         ),
       ],
@@ -92,13 +92,47 @@ class SliderState extends State<MoodSlider> {
     ));
   }
 
-  // TODO do API call to get actual recommendation to pass as String
-  void goToRecommendationScreen() {
+  // TODO do API call to get actual recommendation
+  void goToRecommendationPopup() async {
     String recommendation = "temporary recommendation";
 
-    Navigator.of(context).push(CupertinoPageRoute(
-      builder: (context) => Recommendation(recommendation),
-    ));
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return NDialog(
+            dialogStyle: DialogStyle(titleDivider: true),
+            title: Container(
+              padding: EdgeInsets.all(10.0),
+              child: Text(
+                  "We see that you're not feeling too great, here's a recommendation!"),
+            ),
+            content: SingleChildScrollView(
+              padding: EdgeInsets.all(10.0),
+              child: Container(
+                child: Text(recommendation),
+              ),
+            ),
+            actions: <Widget>[
+              Container(),
+              Container(
+                padding: EdgeInsets.all(20.0),
+                child: FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  color: Colors.green,
+                  child: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              Container(),
+            ],
+          );
+        });
+
+    Navigator.of(context).pop();
   }
 }
 
@@ -106,18 +140,18 @@ class Moods extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FractionallySizedBox(
-      heightFactor: 0.7,
+      widthFactor: 0.9,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 15),
+        padding: EdgeInsets.symmetric(horizontal: 15),
         alignment: Alignment.center,
-        child: Column(
+        child: Row(
           verticalDirection: VerticalDirection.down,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Icon(Icons.sentiment_very_satisfied, size: 60),
-            Icon(Icons.sentiment_neutral, size: 60),
             Icon(Icons.sentiment_very_dissatisfied, size: 60),
+            Icon(Icons.sentiment_neutral, size: 60),
+            Icon(Icons.sentiment_very_satisfied, size: 60),
           ],
         ),
       ),
