@@ -16,9 +16,13 @@ class Home extends StatelessWidget {
   static const IconData profile =
       IconData(0xf419, fontFamily: iconFont, fontPackage: iconFontPackage);
 
+  final CupertinoTabController _controller = CupertinoTabController();
+
   @override
   Widget build(BuildContext context) {
+    _controller.index = 1;
     return CupertinoTabScaffold(
+      controller: _controller,
       tabBar: CupertinoTabBar(items: [
         BottomNavigationBarItem(icon: Icon(calendar), title: Text('Calendar')),
         BottomNavigationBarItem(icon: Icon(mood), title: Text('Mood')),
