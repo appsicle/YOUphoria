@@ -60,9 +60,9 @@ class MoodDisplay extends StatelessWidget {
               colors: [
                 Colors.blue,
                 Colors.purple,
-                Colors.red,
+                Colors.orange,
               ],
-              stops: [0.33, 0.66, 1],
+              stops: [0.2, 0.4, 1],
             ),
           ),
         ),

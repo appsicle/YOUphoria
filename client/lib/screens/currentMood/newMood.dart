@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
-import 'dart:developer' as d;
 import 'dart:io';
-import 'package:flutter/foundation.dart';
+import './recommendation.dart';
+import './happinessData.dart';
 
 class NewMood extends StatelessWidget {
   @override
@@ -20,9 +20,7 @@ class NewMood extends StatelessWidget {
               child: Moods(),
             ),
             Expanded(
-              child: Container(
-                child: MoodSlider(),
-              ),
+              child: MoodSlider(),
             ),
           ],
         ),
@@ -38,32 +36,60 @@ class MoodSlider extends StatefulWidget {
 }
 
 class SliderState extends State<MoodSlider> {
+  double _threshold = 70;
   double _moodValue = 50;
+
   @override
   Widget build(BuildContext context) {
     test();
-    return FractionallySizedBox(
-      heightFactor: .7,
-      child: Container(
-        alignment: Alignment.center,
-        child: FlutterSlider(
-          rtl: true,
-          axis: Axis.vertical,
-          values: [50],
-          max: 100,
-          min: 0,
-          onDragging: (handlerIndex, lowerValue, upperValue) {
-            _moodValue = lowerValue;
-            // setState(() {});
-          },
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        FractionallySizedBox(
+          heightFactor: .7,
+          child: Container(
+            alignment: Alignment.center,
+            child: FlutterSlider(
+              rtl: true,
+              axis: Axis.vertical,
+              values: [50],
+              max: 100,
+              min: 0,
+              onDragging: (handlerIndex, lowerValue, upperValue) {
+                setState(() {
+                  _moodValue = lowerValue;
+                });
+              },
+            ),
+          ),
         ),
-      ),
+        Container(
+          width: 125,
+          padding: EdgeInsets.only(right: 20),
+          child: CupertinoButton(
+            minSize: 60,
+            padding: EdgeInsets.zero,
+            borderRadius: BorderRadius.circular(15.0),
+            onPressed: () {
+              print(_moodValue);
+              if (_moodValue >= _threshold) {
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => HappinessData(),
+                ));
+              } else {
+                Navigator.of(context).push(CupertinoPageRoute(
+                  builder: (context) => Recommendation(),
+                ));
+              }
+            },
+            color: Colors.black54,
+            child: Text("SUBMIT"),
+          ),
+        ),
+      ],
     );
   }
-}
-
-void test() {
-  stdout.writeln('Type the numbers separated by comma:');
 }
 
 class Moods extends StatelessWidget {
@@ -88,5 +114,3 @@ class Moods extends StatelessWidget {
     );
   }
 }
-
-// TODO: keep track of state for slider and send to backend
