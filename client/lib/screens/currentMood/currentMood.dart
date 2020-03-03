@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/semantics.dart';
 import './newMood.dart';
 
 class CurrentMood extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: AddMood(),
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text('Your mood of the day.'),
+      ),
+      child: Center(
+        child: AddMood(),
+      ),
     );
   }
 }
@@ -19,20 +23,12 @@ class AddMood extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.max,
         children: [
-          TitleSection(),
+          Container(
+            height: 88, // estimated height of top title bar
+          ),
           MoodDisplay(),
           AddMoodButton(),
         ]);
-  }
-}
-
-class TitleSection extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(0, 80, 0, 30),
-      child: Center(child: Text('Your mood of the day.')),
-    );
   }
 }
 
@@ -41,10 +37,36 @@ class MoodDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-          padding: const EdgeInsets.fromLTRB(0, 80, 0, 30),
-          child: Center(child: Text('temp space for circle with moods')),
-          color: Colors.redAccent),
+      child: Center(
+        child: Container(
+          width: 300.0,
+          height: 300.0,
+          decoration: new BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 15.0, // soften the shadow
+                spreadRadius: 2.5, //extend the shadow
+                offset: Offset(
+                  10.0, // Move to right 10  horizontally
+                  10.0, // Move to bottom 10 Vertically
+                ),
+              )
+            ],
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.blue,
+                Colors.purple,
+                Colors.red,
+              ],
+              stops: [0.33, 0.66, 1],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
