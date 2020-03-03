@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
+import 'dart:developer' as d;
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 
 class NewMood extends StatelessWidget {
   @override
@@ -35,10 +38,10 @@ class MoodSlider extends StatefulWidget {
 }
 
 class SliderState extends State<MoodSlider> {
-  double _lowerValue = 50;
-  double _upperValue = 180;
+  double _moodValue = 50;
   @override
   Widget build(BuildContext context) {
+    test();
     return FractionallySizedBox(
       heightFactor: .7,
       child: Container(
@@ -50,14 +53,17 @@ class SliderState extends State<MoodSlider> {
           max: 100,
           min: 0,
           onDragging: (handlerIndex, lowerValue, upperValue) {
-            _lowerValue = lowerValue;
-            _upperValue = upperValue;
+            _moodValue = lowerValue;
             // setState(() {});
           },
         ),
       ),
     );
   }
+}
+
+void test() {
+  stdout.writeln('Type the numbers separated by comma:');
 }
 
 class Moods extends StatelessWidget {
@@ -76,7 +82,6 @@ class Moods extends StatelessWidget {
             Icon(Icons.sentiment_very_satisfied, size: 60),
             Icon(Icons.sentiment_neutral, size: 60),
             Icon(Icons.sentiment_very_dissatisfied, size: 60),
-      
           ],
         ),
       ),
