@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-// TODO make this screen get a recommendation from backend and display to user
+// TODO format recommendation text
 class Recommendation extends StatelessWidget {
+  String _recommendation;
+
+  Recommendation(this._recommendation);
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -10,7 +14,7 @@ class Recommendation extends StatelessWidget {
         middle: Text('Get Happy Recommendation'),
       ),
       child: Center(
-        child: Text("temp"),
+        child: Text(_recommendation),
       ),
       backgroundColor: CupertinoColors.lightBackgroundGray,
     );

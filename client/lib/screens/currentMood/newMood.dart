@@ -72,13 +72,9 @@ class SliderState extends State<MoodSlider> {
             onPressed: () {
               print(_moodValue);
               if (_moodValue >= _threshold) {
-                Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => HappinessData(),
-                ));
+                goToHappinessDataScreen();
               } else {
-                Navigator.of(context).push(CupertinoPageRoute(
-                  builder: (context) => Recommendation(),
-                ));
+                goToRecommendationScreen();
               }
             },
             color: Colors.black54,
@@ -87,6 +83,22 @@ class SliderState extends State<MoodSlider> {
         ),
       ],
     );
+  }
+
+  // TODO add anything additional we need to do before changing screens
+  void goToHappinessDataScreen() {
+    Navigator.of(context).push(CupertinoPageRoute(
+      builder: (context) => HappinessData(),
+    ));
+  }
+
+  // TODO do API call to get actual recommendation to pass as String
+  void goToRecommendationScreen() {
+    String recommendation = "temporary recommendation";
+
+    Navigator.of(context).push(CupertinoPageRoute(
+      builder: (context) => Recommendation(recommendation),
+    ));
   }
 }
 
