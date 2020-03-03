@@ -41,7 +41,6 @@ class SliderState extends State<MoodSlider> {
 
   @override
   Widget build(BuildContext context) {
-    test();
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
