@@ -32,7 +32,7 @@ class AddMood extends StatelessWidget {
   }
 }
 
-// TODO make this take in data about user's moods for current day and display somehow
+// TODO make this take in data about user's moods for current day to adjust color weights
 class MoodDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -75,7 +75,6 @@ class AddMoodButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // color: Colors.blue,
       padding: const EdgeInsets.fromLTRB(50, 50, 50,
           100), // made it 100 from bottom assuming bottom nav is 50 pixels
       child: Center(
@@ -84,7 +83,6 @@ class AddMoodButton extends StatelessWidget {
           padding: EdgeInsets.zero,
           borderRadius: BorderRadius.circular(35.0),
           onPressed: () {
-            // Add your onPressed code here!
             Navigator.of(context).push(CupertinoPageRoute(
               builder: (context) => NewMood(),
             ));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+// TODO make this screen get a recommendation from backend and display to user
 class Recommendation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

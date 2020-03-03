@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_xlider/flutter_xlider.dart';
-import 'dart:io';
 import './recommendation.dart';
 import './happinessData.dart';
 
