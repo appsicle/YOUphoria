@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_xlider/flutter_xlider.dart';
 import './happinessData.dart';
 import 'package:ndialog/ndialog.dart';
 
@@ -45,22 +44,19 @@ class SliderState extends State<MoodSlider> {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         FractionallySizedBox(
-          widthFactor: .95,
-          child: Container(
+          widthFactor: .85,
             alignment: Alignment.center,
-            child: FlutterSlider(
-              rtl: false,
-              axis: Axis.horizontal,
-              values: [50],
+            child: CupertinoSlider(
+              value: _moodValue,
+              min: 1,
               max: 100,
-              min: 0,
-              onDragging: (handlerIndex, lowerValue, upperValue) {
+              onChanged: (value) {
                 setState(() {
-                  _moodValue = lowerValue;
+                  _moodValue = value;
                 });
               },
             ),
-          ),
+          
         ),
         Container(
           width: 200,
