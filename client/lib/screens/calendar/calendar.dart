@@ -58,19 +58,7 @@ class _CalendarPageState extends State<CalendarPage>
     super.initState();
     final _selectedDay = DateTime.now();
 
-    // TODO: when user adds new mood, add new event
-    // TODO: rename events to moods
-    // _moodsByDate = {
-    //   new DateFormat("dd/MM/yyyy HH:mm:ss").parse('2020-03-5 12:00:00'): [
-    //     'happy:12:04PM'
-    //   ],
-    //   new DateFormat("dd/MM/yyyy HH:mm:ss").parse('2020-03-6 12:00:00'): [
-    //     'happy:12:04PM'
-    //   ],
-    // };
-    // d0 = DateTime.now();
-
-    // todo request moods from server
+    // TODO request moods from server
     var dataFromServer = {
       "2020/03/06": ["happy at 12:00pm", "sad at 12:01pm", "happy at 12:02pm"],
       "2020/03/07": ["terrible at 3:04pm"],
@@ -134,16 +122,7 @@ class _CalendarPageState extends State<CalendarPage>
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: <Widget>[
-        // Switch out 2 lines below to play with TableCalendar's settings
-        //-----------------------
-        // Container(
-        //   child: FlatButton(
-        //     onPressed: addEvent,
-        //     child: Text('asd'),
-        //   ),
-        // ),
         _buildTableCalendar(),
-        // _buildTableCalendarWithBuilders(),
         Expanded(child: _buildEventList()),
       ],
     );
@@ -161,6 +140,14 @@ class _CalendarPageState extends State<CalendarPage>
         todayColor: Colors.cyan[100],
         markersColor: Colors.black,
         outsideDaysVisible: false,
+        weekendStyle: TextStyle(
+          color: Colors.indigo,
+        ),
+      ),
+      daysOfWeekStyle: DaysOfWeekStyle(
+        weekendStyle: TextStyle(
+          color: Colors.indigo,
+        ),
       ),
       headerStyle: HeaderStyle(
         formatButtonTextStyle:
@@ -190,15 +177,15 @@ class SelectedMoodWidget extends StatelessWidget {
 
   Color _getColor() {
     if (this._mood.contains("amazing")) {
-      return Colors.greenAccent[400];
+      return Colors.greenAccent[200];
     } else if (this._mood.contains("happy")) {
-      return Colors.greenAccent;
+      return Colors.greenAccent[100];
     } else if (this._mood.contains("okay")) {
-      return Colors.cyan;
+      return Colors.cyan[100];
     } else if (this._mood.contains("sad")) {
-      return Colors.indigoAccent;
+      return Colors.indigoAccent[100];
     } else if (this._mood.contains("terrible")) {
-      return Colors.deepPurpleAccent;
+      return Colors.deepPurpleAccent[100];
     } else {
       return Colors.white;
     }
