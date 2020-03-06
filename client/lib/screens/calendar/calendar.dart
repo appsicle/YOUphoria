@@ -28,6 +28,7 @@ class Calendar extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calendar'),
+        backgroundColor: Colors.indigoAccent,
       ),
       body: Center(
         child: CalendarPage(),
@@ -72,13 +73,19 @@ class _CalendarPageState extends State<CalendarPage>
     // todo request moods from server
     var dataFromServer = {
       "2020/03/06": ["happy at 12:00pm", "sad at 12:01pm", "happy at 12:02pm"],
-      "2020/03/07": ["happy at 3:04pm"],
-      "2020/03/10": ["sad at 4:04pm", "happy at 7:02pm", "okay at 10:00pm"]};
-
-    _moodsByDate = {
+      "2020/03/07": ["terrible at 3:04pm"],
+      "2020/03/10": [
+        "sad at 4:04pm",
+        "amazing at 7:02pm",
+        "okay at 10:00pm",
+        "terrible at 10:00pm",
+        "happy at 10:00pm"
+      ]
     };
 
-    dataFromServer.forEach((k,v) {
+    _moodsByDate = {};
+
+    dataFromServer.forEach((k, v) {
       var date = new DateFormat("yyyy/MM/dd", "en_US").parse(k);
       _moodsByDate[date] = v;
     });
@@ -129,12 +136,12 @@ class _CalendarPageState extends State<CalendarPage>
       children: <Widget>[
         // Switch out 2 lines below to play with TableCalendar's settings
         //-----------------------
-        Container(
-          child: FlatButton(
-            onPressed: addEvent,
-            child: Text('asd'),
-          ),
-        ),
+        // Container(
+        //   child: FlatButton(
+        //     onPressed: addEvent,
+        //     child: Text('asd'),
+        //   ),
+        // ),
         _buildTableCalendar(),
         // _buildTableCalendarWithBuilders(),
         Expanded(child: _buildEventList()),
@@ -150,16 +157,16 @@ class _CalendarPageState extends State<CalendarPage>
       holidays: _holidays,
       startingDayOfWeek: StartingDayOfWeek.monday,
       calendarStyle: CalendarStyle(
-        selectedColor: Colors.lightBlueAccent,
-        todayColor: Colors.deepOrange[200],
-        markersColor: Colors.brown[700],
+        selectedColor: Colors.greenAccent,
+        todayColor: Colors.cyan[100],
+        markersColor: Colors.black,
         outsideDaysVisible: false,
       ),
       headerStyle: HeaderStyle(
         formatButtonTextStyle:
             TextStyle().copyWith(color: Colors.white, fontSize: 15.0),
         formatButtonDecoration: BoxDecoration(
-          color: Colors.deepOrange[400],
+          color: Colors.indigo,
           borderRadius: BorderRadius.circular(16.0),
         ),
       ),
@@ -170,20 +177,51 @@ class _CalendarPageState extends State<CalendarPage>
 
   Widget _buildEventList() {
     return ListView(
-      children: _selectedMoods
-          .map((event) => Container(
-                decoration: BoxDecoration(
-                  border: Border.all(width: 0.8),
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: ListTile(
-                  title: Text(event.toString()),
-                  onTap: () => print('$event tapped!'),
-                ),
-              ))
-          .toList(),
+      children:
+          _selectedMoods.map((event) => SelectedMoodWidget(event)).toList(),
+    );
+  }
+}
+
+class SelectedMoodWidget extends StatelessWidget {
+  final String _mood;
+
+  SelectedMoodWidget(this._mood);
+
+  Color _getColor() {
+    if (this._mood.contains("amazing")) {
+      return Colors.greenAccent[400];
+    } else if (this._mood.contains("happy")) {
+      return Colors.greenAccent;
+    } else if (this._mood.contains("okay")) {
+      return Colors.cyan;
+    } else if (this._mood.contains("sad")) {
+      return Colors.indigoAccent;
+    } else if (this._mood.contains("terrible")) {
+      return Colors.deepPurpleAccent;
+    } else {
+      return Colors.white;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.0),
+        color: _getColor(),
+      ),
+      margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: ListTile(
+        title: Text(
+          _mood.toString(),
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        onTap:
+            null, // todo can add something here but I don't think it's necessary?
+      ),
     );
   }
 }
