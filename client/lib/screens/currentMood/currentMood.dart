@@ -32,10 +32,60 @@ class AddMood extends StatelessWidget {
   }
 }
 
-// TODO make this take in data about user's moods for current day to adjust color weights
 class MoodDisplay extends StatelessWidget {
+  final Map<String, Color> moodsToColor = {
+    "amazing": Colors.greenAccent[400],
+    "happy": Colors.greenAccent,
+    "okay": Colors.cyan,
+    "sad": Colors.indigoAccent,
+    "horrible": Colors.deepPurpleAccent,
+  };
+
+  List<Color> generateColorsList(todaysMoods) {
+    // sort function for ordering moods
+    todaysMoods.sort((a, b) {
+      if (a == "amazing") {
+        return 0;
+      } else if (a == "happy") {
+        return b != "amazing" ? 0 : 1;
+      } else if (a == "okay") {
+        return (b != "amazing" && b != "happy") ? 0 : 1;
+      } else if (a == "sad") {
+        return b == "horrible" ? 0 : 1;
+      } else {
+        return 1;
+      }
+    });
+
+    List<Color> result = [];
+    for (int i = 0; i < todaysMoods.length; i++) {
+      result.add(moodsToColor[todaysMoods[i]]);
+    }
+    return result;
+  }
+
+  List<double> generateStops(List<Color> todaysColors) {
+    List<double> result = [];
+    int numStops = todaysColors.length;
+    double increment = 0.8 / numStops;
+    double weight = increment;
+    for (double i = 0; i < numStops; i++) {
+      result.add(weight);
+      weight += increment;
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // TODO get colors and stops based on user's moods of the day
+    List<String> todaysMoods = ["sad", "happy", "amazing", "horrible", "okay"];
+
+    List<Color> todaysColors = generateColorsList(todaysMoods);
+    List<double> todaysStops = generateStops(todaysColors);
+    // print(todaysColors);
+    // print(todaysStops);
+
     return Expanded(
       child: Center(
         child: Container(
@@ -57,12 +107,8 @@ class MoodDisplay extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.blue,
-                Colors.purple,
-                Colors.orange,
-              ],
-              stops: [0.2, 0.4, 1],
+              colors: todaysColors,
+              stops: todaysStops,
             ),
           ),
         ),
@@ -87,7 +133,7 @@ class AddMoodButton extends StatelessWidget {
               builder: (context) => NewMood(),
             ));
           },
-          color: Colors.blue,
+          color: Colors.indigoAccent,
           child: Icon(
             Icons.add,
             size: 40.0,
