@@ -23,7 +23,7 @@ class NewMood extends StatelessWidget {
           ],
         ),
       ),
-      backgroundColor: CupertinoColors.lightBackgroundGray,
+      backgroundColor: CupertinoColors.extraLightBackgroundGray,
     );
   }
 }
@@ -34,8 +34,11 @@ class MoodSlider extends StatefulWidget {
 }
 
 class SliderState extends State<MoodSlider> {
-  double _threshold = 70;
+  double _threshold = 60;
   double _moodValue = 50;
+  Color _moodColor = Colors.cyan;
+  String _currentMood =
+      "okay"; // todo eventually will be used when sending data to backend
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +53,11 @@ class SliderState extends State<MoodSlider> {
             value: _moodValue,
             min: 1,
             max: 100,
+            activeColor: _moodColor,
             onChanged: (value) {
               setState(() {
                 _moodValue = value;
+                _updateCurrentMood();
               });
             },
           ),
@@ -72,12 +77,31 @@ class SliderState extends State<MoodSlider> {
                 goToRecommendationPopup();
               }
             },
-            color: Colors.cyan,
+            color: _moodColor,
             child: Text("SUBMIT MOOD"),
           ),
         ),
       ],
     );
+  }
+
+  void _updateCurrentMood() {
+    if (_moodValue < 20) {
+      this._moodColor = Colors.deepPurpleAccent;
+      this._currentMood = "horrible";
+    } else if (_moodValue < 40) {
+      this._moodColor = Colors.indigoAccent;
+      this._currentMood = "sad";
+    } else if (_moodValue < 60) {
+      this._moodColor = Colors.cyan;
+      this._currentMood = "okay";
+    } else if (_moodValue < 80) {
+      this._moodColor = Colors.greenAccent;
+      this._currentMood = "happy";
+    } else {
+      this._moodColor = Colors.greenAccent[400];
+      this._currentMood = "amazing";
+    }
   }
 
   // TODO add anything additional we need to do before changing screens
@@ -138,7 +162,7 @@ class SliderState extends State<MoodSlider> {
                     Navigator.of(context).pop();
                     rateRecommendation(recommendationId, 1);
                   },
-                  color: Colors.green,
+                  color: Colors.greenAccent[700],
                   child: Icon(
                     Icons.thumb_up,
                     color: Colors.white,
@@ -152,7 +176,7 @@ class SliderState extends State<MoodSlider> {
                     Navigator.of(context).pop();
                     rateRecommendation(recommendationId, 0);
                   },
-                  color: Colors.red,
+                  color: Colors.redAccent,
                   child: Icon(
                     Icons.thumb_down,
                     color: Colors.white,
@@ -189,9 +213,21 @@ class Moods extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
-            Icon(Icons.sentiment_very_dissatisfied, size: 60),
-            Icon(Icons.sentiment_neutral, size: 60),
-            Icon(Icons.sentiment_very_satisfied, size: 60),
+            Icon(
+              Icons.sentiment_very_dissatisfied,
+              size: 60,
+              color: Colors.black,
+            ),
+            Icon(
+              Icons.sentiment_neutral,
+              size: 60,
+              color: Colors.black,
+            ),
+            Icon(
+              Icons.sentiment_very_satisfied,
+              size: 60,
+              color: Colors.black,
+            ),
           ],
         ),
       ),

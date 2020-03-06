@@ -22,16 +22,16 @@ class _EnterMoodDataState extends State<EnterMoodData> {
   @override
   Widget build(BuildContext context) {
     final List<String> _possibleActivities = [
-      "Exercise",
-      "Socializing",
-      "Sports",
-      "Video Games",
+      "Exercising",
+      "Partying",
+      "Playing Sports",
+      "Playing Video Games",
       "Cooking",
-      "Watching movies",
+      "Watching Movies",
       "Shopping",
-      "Time with Family3",
-      "Exercise4",
-      "Time with Family4"
+      "Spending Time with Family",
+      "Hiking",
+      "Working"
     ];
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
@@ -82,6 +82,9 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 onPressed: _selectedActivities.length > 0
                     ? () {
                         // TODO: send selected activites to backend
+                        Navigator.of(context)
+                            .popUntil((route) => route.isFirst);
+                        // should never not be 0 because we disable the button but just in case i guess
                         if (_selectedActivities.length > 0) {
                           print(_selectedActivities);
                         }
