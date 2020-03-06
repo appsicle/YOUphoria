@@ -45,18 +45,17 @@ class SliderState extends State<MoodSlider> {
       children: [
         FractionallySizedBox(
           widthFactor: .85,
-            alignment: Alignment.center,
-            child: CupertinoSlider(
-              value: _moodValue,
-              min: 1,
-              max: 100,
-              onChanged: (value) {
-                setState(() {
-                  _moodValue = value;
-                });
-              },
-            ),
-          
+          alignment: Alignment.center,
+          child: CupertinoSlider(
+            value: _moodValue,
+            min: 1,
+            max: 100,
+            onChanged: (value) {
+              setState(() {
+                _moodValue = value;
+              });
+            },
+          ),
         ),
         Container(
           width: 200,
@@ -90,7 +89,9 @@ class SliderState extends State<MoodSlider> {
 
   // TODO do API call to get actual recommendation
   void goToRecommendationPopup() async {
-    String recommendation = "temporary recommendation";
+    int recommendationId = 123; // temp
+    String recommendation =
+        "temporary recommendation this text area is scrollable btw when it overflows"; // temp
 
     await showDialog(
         context: context,
@@ -102,33 +103,76 @@ class SliderState extends State<MoodSlider> {
               child: Text(
                   "We see that you're not feeling too great, here's a recommendation!"),
             ),
-            content: SingleChildScrollView(
-              padding: EdgeInsets.all(10.0),
-              child: Container(
-                child: Text(recommendation),
+            content: Container(
+              height: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(10.0),
+                      child: Container(
+                        child: Text(recommendation),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    alignment: Alignment.bottomCenter,
+                    child: Text(
+                      "How was your recommendation?",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             actions: <Widget>[
-              Container(),
               Container(
                 padding: EdgeInsets.all(20.0),
                 child: FlatButton(
                   onPressed: () {
                     Navigator.of(context).pop();
+                    rateRecommendation(recommendationId, 1);
                   },
                   color: Colors.green,
                   child: Icon(
-                    Icons.check,
+                    Icons.thumb_up,
                     color: Colors.white,
                   ),
                 ),
               ),
-              Container(),
+              Container(
+                padding: EdgeInsets.all(20.0),
+                child: FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    rateRecommendation(recommendationId, 0);
+                  },
+                  color: Colors.red,
+                  child: Icon(
+                    Icons.thumb_down,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ],
           );
         });
 
     Navigator.of(context).pop();
+  }
+
+  // TODO send feedback on recommendation
+  // rating should only be 0 (bad) or 1 (good)
+  void rateRecommendation(int recommendationId, int rating) {
+    print("recommendation with ID: " +
+        recommendationId.toString() +
+        " rated: " +
+        rating.toString());
   }
 }
 
