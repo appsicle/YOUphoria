@@ -1,8 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import '../home/home.dart';
 
 class Login extends StatelessWidget {
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+  final usernameTextController = TextEditingController();
+  final passwordTextController = TextEditingController();
+  // Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters
+  final RegExp validUsernameExpression = new RegExp(r'^[a-zA-Z0-9_]{5,14}$');
+  // Password requirements: 1 letter, 1 number, 1 special character, between 8 and 20 characters
+  final RegExp validPasswordExpression = new RegExp(
+      r'^(?=(?:[^a-z]*[a-z]){1})(?=(?:[^0-9]*[0-9]){1})(?=.*[!-\/:-@\[-`{-~]).{8,20}$');
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +32,57 @@ class Login extends StatelessWidget {
       );
     }
 
+    // TODO make login function
+    void _login() async {
+      String username = usernameTextController.text;
+      String password = passwordTextController.text;
+
+      // TODO pass this information to backend and do next steps based on result
+      // option 1: invalid username and password notifcation and return
+
+      // option 2: redirect to home page
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('username', username);
+      Navigator.push(
+          context, MaterialPageRoute(builder: (BuildContext ctx) => Home()));
+    }
+
+    // TODO make create account function
+    void _createAccount() {
+      String username = usernameTextController.text;
+      String password = passwordTextController.text;
+
+      if (!validUsernameExpression.hasMatch(username)) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Oop! Username Invalid!"),
+            content: Text(
+                "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
+          ),
+          barrierDismissible: true,
+        );
+        return;
+      }
+
+      if (!validPasswordExpression.hasMatch(password)) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Yikes! Password Invalid!"),
+            content: Text(
+                "Password requirements: 1 letter, 1 number, 1 special character, between 8 and 20 characters"),
+          ),
+          barrierDismissible: true,
+        );
+        return;
+      }
+
+      // TODO create account by sending to server and redirect page to interest selection
+    }
+
     final usernameField = TextField(
+      controller: usernameTextController,
       obscureText: false,
       style: style,
       decoration: InputDecoration(
@@ -33,6 +92,7 @@ class Login extends StatelessWidget {
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
     final passwordField = TextField(
+      controller: passwordTextController,
       obscureText: true,
       style: style,
       decoration: InputDecoration(
@@ -42,10 +102,26 @@ class Login extends StatelessWidget {
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
 
-    final loginButton = _createButton(
-        "Login", Colors.indigoAccent, () {}); // TODO make login function
-    final createAccountButton = _createButton("Create Account",
-        Colors.indigoAccent, () {}); // TODO make create account function
+    final loginButton = _createButton("Login", Colors.indigoAccent, _login);
+    final createAccountButton =
+        _createButton("Create Account", Colors.indigoAccent, _createAccount);
+
+    Future<bool> _isLoggedIn() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      if (prefs.getString('username') != null) {
+        return true;
+      }
+      return false;
+    }
+
+    bool isLoggedIn;
+    _isLoggedIn().then((value) {
+      isLoggedIn = value;
+    });
+    if (isLoggedIn == true) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (BuildContext ctx) => Home()));
+    }
 
     return Scaffold(
       body: Center(
@@ -59,12 +135,22 @@ class Login extends StatelessWidget {
               children: <Widget>[
                 SizedBox(
                   height: 100.0,
-                  child: Image.asset(
-                    "assets/logo.png", // TODO provide logo
-                    fit: BoxFit.contain,
+                  child: Center(
+                    child: Text(
+                      "YOUphoria",
+                      style: TextStyle(
+                        fontSize: 60,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
+                    ),
                   ),
+                  // child: Image.asset(
+                  //   "assets/logo.png", // TODO provide logo
+                  //   fit: BoxFit.contain,
+                  // ),
                 ),
-                SizedBox(height: 45.0),
+                SizedBox(height: 30.0),
                 usernameField,
                 SizedBox(height: 25.0),
                 passwordField,
