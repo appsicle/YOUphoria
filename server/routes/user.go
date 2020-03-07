@@ -7,10 +7,10 @@ import (
 	"net/http"
 	"time"
 
+	Mongodb "../mongodb"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	// "go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func UserHandler(w http.ResponseWriter, r *http.Request){
@@ -26,13 +26,14 @@ type Profile struct {
 	CreatedOn string             `json:"createdOn"`
 }
 
-
 // CreateProfileEndpoint is...
 func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("content-type", "application/json")
 	var profile Profile
 	profile.ID = primitive.NewObjectID()
 	json.NewDecoder(req.Body).Decode(&profile)
+
+	client := Mongodb.GetClient();
 	collection := client.Database("YOUphoria").Collection("profiles")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -53,6 +54,7 @@ func GetProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	fmt.Println(pI)
 	pid := pI.ID
 	var profile Profile
+	client := Mongodb.GetClient();
 	collection := client.Database("YOUphoria").Collection("profiles")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -69,6 +71,9 @@ func UpdateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	var profile Profile
 	json.NewDecoder(req.Body).Decode(&profile)
 	pid := profile.ID
+
+	client := Mongodb.GetClient();
+
 	collection := client.Database("YOUphoria").Collection("profiles")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -86,6 +91,9 @@ func DeleteProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	var profile Profile
 	json.NewDecoder(req.Body).Decode(&profile)
 	pid := profile.ID
+
+	client := Mongodb.GetClient();
+
 	collection := client.Database("YOUphoria").Collection("profiles")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
