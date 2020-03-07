@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func YelpHandler(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w, "Yelp")
+func YelpHandler(res http.ResponseWriter, req *http.Request){
+	fmt.Fprintf(res, "Yelp")
 }
