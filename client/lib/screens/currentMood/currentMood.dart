@@ -78,13 +78,21 @@ class MoodDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO get colors and stops based on user's moods of the day
+    // TODO get todaysMoods from API call
     List<String> todaysMoods = ["sad", "happy", "amazing", "horrible", "okay"];
+    List<Color> todaysColors;
+    List<double> todaysStops;
 
-    List<Color> todaysColors = generateColorsList(todaysMoods);
-    List<double> todaysStops = generateStops(todaysColors);
-    // print(todaysColors);
-    // print(todaysStops);
+    if (todaysMoods.length == 0) {
+      // no mood data entered for the day yet
+      todaysColors = [
+        Colors.grey,
+        Colors.grey[300],
+      ];
+    } else {
+      todaysColors = generateColorsList(todaysMoods);
+    }
+    todaysStops = generateStops(todaysColors);
 
     return Expanded(
       child: Center(
