@@ -119,6 +119,7 @@ class SliderState extends State<MoodSlider> {
   void _goToRecommendationPopup() async {
     print(
         _currentPosition); // can use currentPosition.langitude and currentPosition.longitude
+    // TODO check if for some reason _currentPosition is null, handle that case
     int recommendationId = 123; // temp
     String recommendation =
         "temporary recommendation this text area is scrollable btw when it overflows"; // temp
