@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import './happinessData.dart';
 import 'package:ndialog/ndialog.dart';
+import 'package:geolocator/geolocator.dart';
 
 class NewMood extends StatelessWidget {
   @override
@@ -37,11 +38,14 @@ class SliderState extends State<MoodSlider> {
   double _threshold = 60;
   double _moodValue = 50;
   Color _moodColor = Colors.cyan;
+  Position _currentPosition;
   String _currentMood =
       "okay"; // todo eventually will be used when sending data to backend
 
   @override
   Widget build(BuildContext context) {
+    _getCurrentLocation();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -70,11 +74,11 @@ class SliderState extends State<MoodSlider> {
             padding: EdgeInsets.all(15.0),
             borderRadius: BorderRadius.circular(15.0),
             onPressed: () {
-              // print(_moodValue);
+              _getCurrentLocation(); // update current location
               if (_moodValue >= _threshold) {
-                goToHappinessDataScreen();
+                _goToHappinessDataScreen();
               } else {
-                goToRecommendationPopup();
+                _goToRecommendationPopup();
               }
             },
             color: _moodColor,
@@ -105,14 +109,16 @@ class SliderState extends State<MoodSlider> {
   }
 
   // TODO add anything additional we need to do before changing screens
-  void goToHappinessDataScreen() {
+  void _goToHappinessDataScreen() {
     Navigator.of(context).push(CupertinoPageRoute(
       builder: (context) => HappinessData(),
     ));
   }
 
   // TODO do API call to get actual recommendation
-  void goToRecommendationPopup() async {
+  void _goToRecommendationPopup() async {
+    print(
+        _currentPosition); // can use currentPosition.langitude and currentPosition.longitude
     int recommendationId = 123; // temp
     String recommendation =
         "temporary recommendation this text area is scrollable btw when it overflows"; // temp
@@ -197,6 +203,19 @@ class SliderState extends State<MoodSlider> {
         recommendationId.toString() +
         " rated: " +
         rating.toString());
+  }
+
+  void _getCurrentLocation() {
+    final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+    geolocator
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+        .then((Position position) {
+      setState(() {
+        _currentPosition = position;
+      });
+    }).catchError((e) {
+      print(e);
+    });
   }
 }
 
