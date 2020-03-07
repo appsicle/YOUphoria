@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 // import 'package:english_words/english_words.dart';
 import 'screens/home/home.dart';
+import 'screens/login/login.dart';
 import 'package:flutter/cupertino.dart';
 
 void main() => runApp(MyApp());
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CupertinoApp(
-      home: Home(),
+      home: Login(),
       localizationsDelegates: <LocalizationsDelegate<dynamic>>[
         DefaultMaterialLocalizations.delegate,
         DefaultWidgetsLocalizations.delegate,
