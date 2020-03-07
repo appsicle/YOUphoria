@@ -118,7 +118,7 @@ class SliderState extends State<MoodSlider> {
   // TODO do API call to get actual recommendation
   void _goToRecommendationPopup() async {
     print(
-        _currentPosition); // can use currentPosition.langitude and currentPosition.longitude
+        _currentPosition); // can use currentPosition.latitude and currentPosition.longitude
     // TODO check if for some reason _currentPosition is null, handle that case
     int recommendationId = 123; // temp
     String recommendation =
