@@ -8,7 +8,8 @@ import (
     "go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var client *mongo.Client
+var Client *mongo.Client
+var ProfileCollection *mongo.Collection
 
 func ConnectDB() {
 	fmt.Println("Starting the application...")
@@ -16,9 +17,7 @@ func ConnectDB() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	clientOptions := options.Client().ApplyURI("mongodb+srv://testacc:testaccpw@youphoria-r8kiz.mongodb.net/test?retryWrites=true&w=majority")
-	client, _ = mongo.Connect(ctx, clientOptions)
-}
-
-func GetClient() *mongo.Client {
-	return client;
+	
+	Client, _ = mongo.Connect(ctx, clientOptions)
+	ProfileCollection = Client.Database("YOUphoria").Collection("profiles")
 }
