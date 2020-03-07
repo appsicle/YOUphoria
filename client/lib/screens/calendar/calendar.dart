@@ -107,16 +107,6 @@ class _CalendarPageState extends State<CalendarPage>
     print('CALLBACK: _onVisibleDaysChanged');
   }
 
-  void addEvent() {
-    // print();
-
-    var now = new DateTime.now();
-    print(new DateFormat("h:mm a", "en_US").parse("12:08 PM"));
-    print(new DateFormat("dd-MM-yyyy hh:mm:ss")
-        .format(now)); // => 21-04-2019 02:40:25
-    print(DateTime.parse("1996-07-20 20:18:04"));
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(

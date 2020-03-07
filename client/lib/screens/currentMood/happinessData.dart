@@ -10,7 +10,6 @@ class HappinessData extends StatelessWidget {
   }
 }
 
-// TODO make this screen be a place for users to add additional information on why they are in a good mood
 class EnterMoodData extends StatefulWidget {
   @override
   _EnterMoodDataState createState() => _EnterMoodDataState();
@@ -38,12 +37,9 @@ class _EnterMoodDataState extends State<EnterMoodData> {
         middle: Text('Why were you happy?'),
       ),
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Expanded(
-            // height: 1000,
-
             flex: 9,
             child: Container(
               padding: EdgeInsets.all(20),
@@ -81,7 +77,7 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 disabledColor: Colors.grey[300],
                 onPressed: _selectedActivities.length > 0
                     ? () {
-                        // TODO: send selected activites to backend
+                        // TODO: send mood data to backend with selected activites
                         Navigator.of(context)
                             .popUntil((route) => route.isFirst);
                         // should never not be 0 because we disable the button but just in case i guess

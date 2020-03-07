@@ -84,7 +84,7 @@ class MoodDisplay extends StatelessWidget {
     List<double> todaysStops;
 
     if (todaysMoods.length == 0) {
-      // no mood data entered for the day yet
+      // case: no mood data entered for the day yet
       todaysColors = [
         Colors.grey,
         Colors.grey[300],

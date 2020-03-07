@@ -117,9 +117,12 @@ class SliderState extends State<MoodSlider> {
 
   // TODO do API call to get actual recommendation
   void _goToRecommendationPopup() async {
-    print(
-        _currentPosition); // can use currentPosition.latitude and currentPosition.longitude
+    // TODO send mood data to backend
+
     // TODO check if for some reason _currentPosition is null, handle that case
+    // can use _currentPosition.latitude and currentPosition.longitude
+
+    // TODO get recommendation with API call
     int recommendationId = 123; // temp
     String recommendation =
         "temporary recommendation this text area is scrollable btw when it overflows"; // temp
