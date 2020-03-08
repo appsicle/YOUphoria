@@ -43,8 +43,8 @@ class Login extends StatelessWidget {
       // option 2: redirect to home page
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('username', username);
-      Navigator.push(
-          context, MaterialPageRoute(builder: (BuildContext ctx) => Home()));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (BuildContext ctx) => new Home()));
     }
 
     // TODO make create account function
@@ -105,23 +105,6 @@ class Login extends StatelessWidget {
     final loginButton = _createButton("Login", Colors.indigoAccent, _login);
     final createAccountButton =
         _createButton("Create Account", Colors.indigoAccent, _createAccount);
-
-    Future<bool> _isLoggedIn() async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      if (prefs.getString('username') != null) {
-        return true;
-      }
-      return false;
-    }
-
-    bool isLoggedIn;
-    _isLoggedIn().then((value) {
-      isLoggedIn = value;
-    });
-    if (isLoggedIn == true) {
-      Navigator.push(
-          context, MaterialPageRoute(builder: (BuildContext ctx) => Home()));
-    }
 
     return Scaffold(
       body: Center(

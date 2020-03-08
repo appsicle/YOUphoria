@@ -6,11 +6,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var username = prefs.getString('username');
-
   runApp(CupertinoApp(
-    home: Login(),
+    home: DetermineScreen(),
     localizationsDelegates: <LocalizationsDelegate<dynamic>>[
       DefaultMaterialLocalizations.delegate,
       DefaultWidgetsLocalizations.delegate,
@@ -19,25 +16,39 @@ Future<void> main() async {
   ));
 }
 
-class Temp extends StatelessWidget {
+class DetermineScreen extends StatefulWidget {
+  @override
+  _DetermineScreenState createState() => _DetermineScreenState();
+}
+
+class _DetermineScreenState extends State<DetermineScreen> {
+  Widget toDisplay = Container();
+  @override
+  void initState() {
+    checkIfLoggedIn().then((value) {
+      // print("async done");
+    });
+    super.initState();
+  }
+
+  Future checkIfLoggedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString('username');
+    if (username != null) {
+      // print("logged in");
+      setState(() {
+        toDisplay = Home();
+      });
+    } else {
+      // print("logged out");
+      setState(() {
+        toDisplay = Login();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (BuildContext ctx) => Login()));
-    return Home();
+    return toDisplay;
   }
 }
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return CupertinoApp(
-//       home: Login(),
-//       localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-//         DefaultMaterialLocalizations.delegate,
-//         DefaultWidgetsLocalizations.delegate,
-//         DefaultCupertinoLocalizations.delegate,
-//       ],
-//     );
-//   }
-// }
