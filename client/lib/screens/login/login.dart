@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../createAccount/createAccount.dart';
 import '../home/home.dart';
 
 class Login extends StatelessWidget {
@@ -48,37 +49,45 @@ class Login extends StatelessWidget {
     }
 
     // TODO make create account function
-    void _createAccount() {
+    void _createAccount() async {
       String username = usernameTextController.text;
       String password = passwordTextController.text;
 
-      if (!validUsernameExpression.hasMatch(username)) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text("Oop! Username Invalid!"),
-            content: Text(
-                "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
-          ),
-          barrierDismissible: true,
-        );
-        return;
-      }
+      // TODO uncomment this out when ready to actually check for valid username/password (commented out for easier testing)
+      // if (!validUsernameExpression.hasMatch(username)) {
+      //   showDialog(
+      //     context: context,
+      //     builder: (_) => AlertDialog(
+      //       title: Text("Oop! Username Invalid!"),
+      //       content: Text(
+      //           "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
+      //     ),
+      //     barrierDismissible: true,
+      //   );
+      //   return;
+      // }
 
-      if (!validPasswordExpression.hasMatch(password)) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text("Yikes! Password Invalid!"),
-            content: Text(
-                "Password requirements: 1 letter, 1 number, 1 special character, between 8 and 20 characters"),
-          ),
-          barrierDismissible: true,
-        );
-        return;
-      }
+      // if (!validPasswordExpression.hasMatch(password)) {
+      //   showDialog(
+      //     context: context,
+      //     builder: (_) => AlertDialog(
+      //       title: Text("Yikes! Password Invalid!"),
+      //       content: Text(
+      //           "Password requirements: 1 letter, 1 number, 1 special character, between 8 and 20 characters"),
+      //     ),
+      //     barrierDismissible: true,
+      //   );
+      //   return;
+      // }
 
       // TODO create account by sending to server and redirect page to interest selection
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('username', username);
+
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext ctx) => new CreateAccount()));
     }
 
     final usernameField = TextField(

@@ -1,60 +1,44 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../home/home.dart';
+import '../currentMood/happinessData.dart';
 
-class HappinessData extends StatelessWidget {
-  static final List<String> possibleActivities = [
-    "Exercising",
-    "Partying",
-    "Playing Sports",
-    "Playing Video Games",
-    "Cooking",
-    "Watching Movies",
-    "Shopping",
-    "Spending Time with Family",
-    "Hiking",
-    "Working"
-  ];
-
-  static List<String> getPossibleActivities() {
-    return possibleActivities;
-  }
-
+class CreateAccount extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: EnterMoodData(),
-    );
-  }
+  _CreateAccountState createState() => _CreateAccountState();
 }
 
-class EnterMoodData extends StatefulWidget {
-  @override
-  _EnterMoodDataState createState() => _EnterMoodDataState();
-}
-
-class _EnterMoodDataState extends State<EnterMoodData> {
+class _CreateAccountState extends State<CreateAccount> {
   List<String> _selectedActivities = [];
   final List<String> _possibleActivities =
       HappinessData.getPossibleActivities();
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Why were you happy?'),
-      ),
+    return Container(
+      color: Colors.grey[200],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
+          Container(
+            padding: EdgeInsets.all(20.0),
+            height: 175,
+            alignment: Alignment.bottomCenter,
+            child: Text(
+              "Enter in some interests so we can start making personalized recommendations for you!",
+              style: TextStyle(
+                fontSize: 25,
+              ),
+            ),
+          ),
           Expanded(
             flex: 9,
             child: Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 25.0),
               child: GridView.count(
                 crossAxisCount: 4,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
+                mainAxisSpacing: 10.0,
+                crossAxisSpacing: 10.0,
                 children: List.generate(10, (index) {
                   return Container(
                     height: 20,
@@ -86,12 +70,9 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 onPressed: _selectedActivities.length > 0
                     ? () {
                         // TODO: send mood data to backend with selected activites
-                        // Navigator.of(context)
-                        //     .popUntil((route) => route.isFirst);
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
                                 builder: (BuildContext ctx) => new Home()));
-                        // should never not be 0 because we disable the button but just in case i guess
                         if (_selectedActivities.length > 0) {
                           print(_selectedActivities);
                         }
@@ -102,42 +83,6 @@ class _EnterMoodDataState extends State<EnterMoodData> {
             ),
           )
         ],
-      ),
-    );
-  }
-}
-
-class ActivityButton extends StatefulWidget {
-  final String name;
-  final Function onPressed;
-
-  const ActivityButton(this.name, this.onPressed);
-
-  @override
-  _ActivityButtonState createState() => _ActivityButtonState();
-}
-
-class _ActivityButtonState extends State<ActivityButton> {
-  bool _isSelected = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoButton(
-      padding: EdgeInsets.all(10.0),
-      borderRadius: BorderRadius.circular(15.0),
-      color: this._isSelected ? Colors.greenAccent : Colors.grey[50],
-      onPressed: () {
-        widget.onPressed();
-        setState(() {
-          this._isSelected = !this._isSelected;
-        });
-      },
-      child: Center(
-        child: Text(
-          widget.name,
-          style: TextStyle(color: Colors.black, fontSize: 14),
-          textAlign: TextAlign.center,
-        ),
       ),
     );
   }
