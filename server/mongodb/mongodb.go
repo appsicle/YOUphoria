@@ -10,6 +10,7 @@ import (
 
 var Client *mongo.Client
 var ProfileCollection *mongo.Collection
+var TokenCollection *mongo.Collection
 
 func ConnectDB() {
 	fmt.Println("Starting the application...")
@@ -20,4 +21,5 @@ func ConnectDB() {
 	
 	Client, _ = mongo.Connect(ctx, clientOptions)
 	ProfileCollection = Client.Database("YOUphoria").Collection("profiles")
+	TokenCollection = Client.Database("YOUphoria").Collection("tokens")
 }
