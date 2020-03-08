@@ -3,20 +3,17 @@ package routes
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"time"
 
 	Mongodb "../mongodb"
 	log "github.com/sirupsen/logrus"
+	"github.com/google/uuid"
+	"github.com/mitchellh/mapstructure"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-func UserHandler(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w, "User")
-}
 
 // Mood is...
 type Mood struct {
@@ -38,12 +35,12 @@ type Preference struct {
 
 // Profile is...
 type Profile struct {
-	ID         	primitive.ObjectID `json:"id"`
-	UserName  	string             `json:"user"`
-	Password  	string			   `json:"password"`
-	Email     	string             `json:"email"`
-	FullName  	string             `json:"name"`
-	Preferences []Preference 	   `json:"preferences"`
+	ID         	primitive.ObjectID `json:"id"` 
+	UserName  	string             `json:"user" mapstructure:"user"`
+	Password  	string			   `json:"password,omitempty"`
+	Email     	string             `json:"email" mapstructure:"email"`
+	FullName  	string             `json:"name" mapstructure:"name"`
+	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
 	Calendar  	[]Day			   `json:"calendar"`
 	CreatedOn 	string             `json:"createdOn"`
 }
@@ -66,26 +63,27 @@ type Profile struct {
         }
     ],
     "calendar": [
-		{date: "098654", moods: [
-			{mood: 3, time: "0987"}, 
-			{mood: 3, time: "0987"}, 
-			{mood: 3, time: "0987"}
+		{"date": "098654", "moods": [
+			{"mood": 3, "time": "0987"}, 
+			{"mood": 3, "time": "0987"}, 
+			{"mood": 3, "time": "0987"}
 			]
 		},
-		{date: "098654", moods: [
-			{mood: 3, time: "0987"}, 
-			{mood: 3, time: "0987"}, 
-			{mood: 3, time: "0987"}
+		{"date": "098654", "moods": [
+			{"mood": 3, "time": "0987"}, 
+			{"mood": 3, "time": "0987"}, 
+			{"mood": 3, "time": "0987"}
 			]
-		},
+		}
 	],
     "createdOn": "2020-03-07 03:31:05.1134445 -0800 PST m=+169.901537401"
 }
 */
 
-// Pid is...
-type Pid struct {
-	ID        primitive.ObjectID `json:"id"`
+// Token is...
+type Token struct {
+	Token	string     		   `json:"token"`
+	PID		primitive.ObjectID `json:"pid"`
 }
 
 // CreateProfileEndpoint is...
@@ -94,22 +92,44 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var profile Profile
-	profile.ID = primitive.NewObjectID()
-	profile.CreatedOn = time.Now().String()
-	if err := json.NewDecoder(req.Body).Decode(&profile)	; err != nil {
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.WithFields(log.Fields{"req": reqMap,}).Info("CreateProfileEndpoint: incoming request")
 
-	log.WithFields(log.Fields{"req": profile,}).Info("CreateProfileEndpoint")
-
+	// create profile
+	var profile Profile
+	if err := mapstructure.Decode(reqMap, &profile); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	profile.ID = primitive.NewObjectID()
+	profile.CreatedOn = time.Now().String()
+	profile.Password = reqMap["password"].(string)	// TODO hash password
 	if _, err := Mongodb.ProfileCollection.InsertOne(ctx, profile); err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
 	}
-	json.NewEncoder(res).Encode(profile)
+
+	// create token
+	var token Token
+	token.PID = profile.ID
+	token.Token = uuid.New().String()
+	if _, err := Mongodb.TokenCollection.InsertOne(ctx, token); err != nil{
+		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
+
+	// map res
+	resMap := make(map[string]interface{})
+	resMap["token"] = token.Token
+	log.WithFields(log.Fields{"res": resMap,}).Info("CreateProfileEndpoint: outgoing result")
+	json.NewEncoder(res).Encode(resMap)
 }
 
 // GetProfileEndpoint is...
@@ -118,21 +138,76 @@ func GetProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var pid Pid
-	if err := json.NewDecoder(req.Body).Decode(&pid); err != nil {
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.WithFields(log.Fields{"req": reqMap,}).Info("GetProfileEndpoint: incoming request")
 
-	log.WithFields(log.Fields{"req": pid,}).Info("GetProfileEndpoint")
-
-	var profile Profile
-	if err := Mongodb.ProfileCollection.FindOne(ctx, bson.M{"id": pid.ID}).Decode(&profile); err != nil {
+	// get PID by token
+	var token Token
+	token.Token = reqMap["token"].(string)
+	if err := Mongodb.TokenCollection.FindOne(ctx, bson.M{"token": token.Token}).Decode(&token); err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
 	}
+
+	// get Profile
+	var profile Profile
+	if err := Mongodb.ProfileCollection.FindOne(ctx, bson.M{"id": token.PID}).Decode(&profile); err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
+	profile.Password = ""	// TODO do this in mongodb query
+
+	log.WithFields(log.Fields{"res": profile,}).Info("GetProfileEndpoint: outgoing result")
 	json.NewEncoder(res).Encode(profile)
+}
+
+// LoginProfileEndpoint is...
+func LoginProfileEndpoint(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("content-type", "application/json")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.WithFields(log.Fields{"req": reqMap,}).Info("LoginProfileEndpoint: incoming request")
+
+	// get Profile
+	var profile Profile
+	filter := bson.M{"username": reqMap["user"].(string), "password": reqMap["password"].(string)}
+	if err := Mongodb.ProfileCollection.FindOne(ctx, filter).Decode(&profile); err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
+
+	// get PID by token
+	var token Token
+	filter = bson.M{"pid": profile.ID}
+	if err := Mongodb.TokenCollection.FindOne(ctx, filter).Decode(&token); err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
+
+	// TODO maybe return just token?
+	// map res (profile + token)
+	resMap := make(map[string]interface{})
+	j, _ := json.Marshal(profile); json.Unmarshal(j, &resMap)	// struct -> json -> map
+	resMap["token"] = token.Token
+  
+	log.WithFields(log.Fields{"res": resMap,}).Info("LoginProfileEndpoint: outgoing result")
+	json.NewEncoder(res).Encode(resMap)
 }
 
 // UpdateProfileEndpoint is...
@@ -141,41 +216,60 @@ func UpdateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var profile Profile
-	if err := json.NewDecoder(req.Body).Decode(&profile); err != nil {
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.WithFields(log.Fields{"req": reqMap,}).Info("UpdateProfileEndpoint: incoming request")
 
-	log.WithFields(log.Fields{"req": profile,}).Info("UpdateProfileEndpoint")
+	// get PID by token
+	var token Token
+	token.Token = reqMap["token"].(string)
+	if err := Mongodb.TokenCollection.FindOne(ctx, bson.M{"token": token.Token}).Decode(&token); err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
 
-	result, err := Mongodb.ProfileCollection.ReplaceOne(ctx, bson.M{"id": profile.ID}, profile)
+	// update profile
+	filter := bson.M{"id": bson.M{"$eq": token.PID,},}
+	update := bson.M{"$set": bson.M{reqMap["attribute"].(string): reqMap["value"].(string)}}
+	result, err := Mongodb.ProfileCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
 	}
-	json.NewEncoder(res).Encode(result)
+
+	log.WithFields(log.Fields{"res": "TODO put status here",}).Info("UpdateProfileEndpoint: outgoing result")
+	json.NewEncoder(res).Encode(result)	// TODO shouldn't send update results to frontend
 }
 
+// TODO most likely not used but good reference 
 // DeleteProfileEndpoint is...
 func DeleteProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("content-type", "applications/json")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	var pid Pid
-	if err := json.NewDecoder(req.Body).Decode(&pid); err != nil {
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
 	}
+	log.WithFields(log.Fields{"req": reqMap,}).Info("DeleteProfileEndpoint: incoming request")
 
-	log.WithFields(log.Fields{"req": pid,}).Info("DeleteProfileEndpoint")
-
-	result, err := Mongodb.ProfileCollection.DeleteOne(ctx, bson.M{"id": pid.ID})
+	// delete profile
+	result, err := Mongodb.ProfileCollection.DeleteOne(ctx, bson.M{"id": reqMap["id"].(string)})
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
 	}
-	json.NewEncoder(res).Encode(result)
+
+	log.WithFields(log.Fields{"res": "TODO put status here",}).Info("DeleteProfileEndpoint: outgoing result")
+	json.NewEncoder(res).Encode(result) // TODO shouldn't send update results to frontend
 }
