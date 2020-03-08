@@ -11,7 +11,8 @@ class Profile extends StatelessWidget {
           onPressed: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();
             prefs.remove('username'); // logout so remove this cached data
-            Navigator.of(context, rootNavigator: true).pop();
+            Navigator.of(context, rootNavigator: true).pushReplacement(
+                MaterialPageRoute(builder: (BuildContext ctx) => new Login()));
           },
           child: Text('Logout'),
         ),
