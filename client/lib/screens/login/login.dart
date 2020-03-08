@@ -44,8 +44,10 @@ class Login extends StatelessWidget {
       // option 2: redirect to home page
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('username', username);
-      Navigator.push(context,
-          MaterialPageRoute(builder: (BuildContext ctx) => new Home()));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (BuildContext ctx) => new Home(username: username)));
     }
 
     // TODO make create account function

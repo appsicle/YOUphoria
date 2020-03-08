@@ -37,7 +37,7 @@ class _DetermineScreenState extends State<DetermineScreen> {
     if (username != null) {
       // print("logged in");
       setState(() {
-        toDisplay = Home();
+        toDisplay = Home(username: username);
       });
     } else {
       // print("logged out");

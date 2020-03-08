@@ -5,6 +5,10 @@ import '../profile/profile.dart';
 import '../currentMood/currentMood.dart';
 
 class Home extends StatelessWidget {
+  final String username;
+
+  Home({Key key, @required this.username}) : super(key: key);
+
   static const String iconFont = 'CupertinoIcons';
 
   /// The dependent package providing the Cupertino icons font.
@@ -34,7 +38,8 @@ class Home extends StatelessWidget {
         } else if (index == 1) {
           return CupertinoTabView(builder: (context) => CurrentMood());
         } else {
-          return CupertinoTabView(builder: (context) => Profile());
+          return CupertinoTabView(
+              builder: (context) => Profile(username: username));
         }
       },
     );
