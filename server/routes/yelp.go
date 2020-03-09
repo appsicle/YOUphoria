@@ -24,7 +24,7 @@ type YelpReq struct {
 // ex: https://api.yelp.com/v3/businesses/search?term=taco%20truck&location=irvine&sort_by=rating&radius=20000
 
 var queryStem = "https://api.yelp.com/v3/businesses/search?"
-var yelpToken = "Bearer N9qcpKyP2tgirOpSZv-KAG3o3C4KNs3onoZ16w2Xpu7hDrBuxTCXOizcUjyIOPxCBNwbOT6i5BoBGYZI2TR5HCV_whm4fA2wm8fM8wCiKyskb0duurwmj3yUvVZPXnYx"
+var yelpToken = ""
 
 func GetYelpResults(res http.ResponseWriter, req *http.Request){
 	res.Header().Set("content-type", "application/json")

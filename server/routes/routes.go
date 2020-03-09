@@ -2,6 +2,7 @@ package routes
 
 import (
 	// Logging "../logging"
+	Auth "../auth"
 
 	mux "github.com/gorilla/mux"
 )
@@ -10,10 +11,15 @@ import (
 func ConnectRoutes(r * mux.Router){
 	// Logging.Log.Info("Connecting routes")
 
-	r.HandleFunc("/yelp", GetYelpResults).Methods("GET")
+	auth_r := r.PathPrefix("/").Subrouter()
+	auth_r.Use(Auth.Middleware)
+
 	r.HandleFunc("/profile/create", CreateProfileEndpoint).Methods("POST")
-	r.HandleFunc("/profile/get", GetProfileEndpoint).Methods("GET")
 	r.HandleFunc("/profile/login", LoginProfileEndpoint).Methods("POST")
-	r.HandleFunc("/profile/update", UpdateProfileEndpoint).Methods("POST")
-	r.HandleFunc("/profile/delete", DeleteProfileEndpoint).Methods("POST")
+	auth_r.HandleFunc("/profile/getProfile", GetProfileEndpoint).Methods("GET")
+	auth_r.HandleFunc("/profile/logout", LogoutProfileEndpoint).Methods("GET")
+	auth_r.HandleFunc("/profile/update", UpdateProfileEndpoint).Methods("POST")
+	auth_r.HandleFunc("/profile/delete", DeleteProfileEndpoint).Methods("GET")
+
+	auth_r.HandleFunc("/backend/yelp", GetYelpResults).Methods("POST")
 }
