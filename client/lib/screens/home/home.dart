@@ -34,9 +34,11 @@ class Home extends StatelessWidget {
       ]),
       tabBuilder: (context, index) {
         if (index == 0) {
-          return CupertinoTabView(builder: (context) => Calendar());
+          return CupertinoTabView(
+              builder: (context) => Calendar(username: username));
         } else if (index == 1) {
-          return CupertinoTabView(builder: (context) => CurrentMood());
+          return CupertinoTabView(
+              builder: (context) => CurrentMood(username: username));
         } else {
           return CupertinoTabView(
               builder: (context) => Profile(username: username));

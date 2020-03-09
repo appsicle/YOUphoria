@@ -3,6 +3,10 @@ import 'package:flutter/cupertino.dart';
 import './newMood.dart';
 
 class CurrentMood extends StatelessWidget {
+  final String username;
+
+  CurrentMood({Key key, @required this.username}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -10,13 +14,17 @@ class CurrentMood extends StatelessWidget {
         middle: Text('Your mood of the day.'),
       ),
       child: Center(
-        child: AddMood(),
+        child: AddMood(username: username),
       ),
     );
   }
 }
 
 class AddMood extends StatelessWidget {
+  final String username;
+
+  AddMood({Key key, @required this.username}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Column(

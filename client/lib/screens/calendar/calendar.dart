@@ -16,13 +16,11 @@ final Map<DateTime, List> _holidays = {
   DateTime(2019, 4, 22): ['Easter Monday'],
 };
 
-void main() {
-  initializeDateFormatting().then((_) => runApp(Calendar()));
-}
-
-void addMood(DateTime date, mood) {}
-
 class Calendar extends StatelessWidget {
+  final String username;
+
+  Calendar({Key key, @required this.username}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,16 +29,18 @@ class Calendar extends StatelessWidget {
         backgroundColor: Colors.indigoAccent,
       ),
       body: Center(
-        child: CalendarPage(),
+        child: CalendarPage(username: username),
       ),
     );
   }
 }
 
 class CalendarPage extends StatefulWidget {
-  CalendarPage({Key key, this.title}) : super(key: key);
+  CalendarPage({Key key, this.title, @required this.username})
+      : super(key: key);
 
   final String title;
+  final String username;
 
   @override
   _CalendarPageState createState() => _CalendarPageState();
