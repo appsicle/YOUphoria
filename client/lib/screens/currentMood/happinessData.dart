@@ -3,6 +3,10 @@ import 'package:flutter/cupertino.dart';
 import '../home/home.dart';
 
 class HappinessData extends StatelessWidget {
+  final String username;
+
+  HappinessData({Key key, @required this.username}) : super(key: key);
+
   static final List<String> possibleActivities = [
     "Exercising",
     "Partying",
@@ -23,20 +27,27 @@ class HappinessData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: EnterMoodData(),
+      child: EnterMoodData(username),
     );
   }
 }
 
 class EnterMoodData extends StatefulWidget {
+  final String _username;
+
+  EnterMoodData(this._username);
+
   @override
-  _EnterMoodDataState createState() => _EnterMoodDataState();
+  _EnterMoodDataState createState() => _EnterMoodDataState(this._username);
 }
 
 class _EnterMoodDataState extends State<EnterMoodData> {
   List<String> _selectedActivities = [];
   final List<String> _possibleActivities =
       HappinessData.getPossibleActivities();
+  final String _username;
+
+  _EnterMoodDataState(this._username);
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +101,8 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                         //     .popUntil((route) => route.isFirst);
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext ctx) => new Home()));
+                                builder: (BuildContext ctx) =>
+                                    new Home(username: _username)));
                         // should never not be 0 because we disable the button but just in case i guess
                         if (_selectedActivities.length > 0) {
                           print(_selectedActivities);

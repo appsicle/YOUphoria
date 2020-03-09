@@ -35,7 +35,7 @@ class AddMood extends StatelessWidget {
             height: 88, // estimated height of top title bar
           ),
           MoodDisplay(),
-          AddMoodButton(),
+          AddMoodButton(username: username),
         ]);
   }
 }
@@ -134,6 +134,10 @@ class MoodDisplay extends StatelessWidget {
 }
 
 class AddMoodButton extends StatelessWidget {
+  final String username;
+
+  AddMoodButton({Key key, @required this.username}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -146,7 +150,7 @@ class AddMoodButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(35.0),
           onPressed: () {
             Navigator.of(context).push(CupertinoPageRoute(
-              builder: (context) => NewMood(),
+              builder: (context) => NewMood(username: username),
             ));
           },
           color: Colors.indigoAccent,

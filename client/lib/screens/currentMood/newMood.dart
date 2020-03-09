@@ -5,6 +5,10 @@ import 'package:ndialog/ndialog.dart';
 import 'package:geolocator/geolocator.dart';
 
 class NewMood extends StatelessWidget {
+  final String username;
+
+  NewMood({Key key, @required this.username}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -19,7 +23,7 @@ class NewMood extends StatelessWidget {
               child: Moods(),
             ),
             Container(
-              child: MoodSlider(),
+              child: MoodSlider(username),
             ),
           ],
         ),
@@ -30,17 +34,24 @@ class NewMood extends StatelessWidget {
 }
 
 class MoodSlider extends StatefulWidget {
+  final String _username;
+
+  MoodSlider(this._username);
+
   @override
-  SliderState createState() => SliderState();
+  SliderState createState() => SliderState(_username);
 }
 
 class SliderState extends State<MoodSlider> {
   double _threshold = 60;
   double _moodValue = 50;
   Color _moodColor = Colors.cyan;
+  final String _username;
   Position _currentPosition;
   String _currentMood =
       "okay"; // todo eventually will be used when sending data to backend
+
+  SliderState(this._username);
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +122,7 @@ class SliderState extends State<MoodSlider> {
   // TODO add anything additional we need to do before changing screens
   void _goToHappinessDataScreen() {
     Navigator.of(context).push(CupertinoPageRoute(
-      builder: (context) => HappinessData(),
+      builder: (context) => HappinessData(username: _username),
     ));
   }
 
