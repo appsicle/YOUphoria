@@ -89,7 +89,8 @@ class Login extends StatelessWidget {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (BuildContext ctx) => new CreateAccount()));
+              builder: (BuildContext ctx) =>
+                  new CreateAccount(username: username)));
     }
 
     final usernameField = TextField(
