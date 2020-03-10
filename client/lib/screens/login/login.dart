@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../createAccount/createAccount.dart';
 import '../home/home.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
 
 class Login extends StatelessWidget {
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
@@ -50,6 +52,8 @@ class Login extends StatelessWidget {
               builder: (BuildContext ctx) => new Home(username: username)));
     }
 
+    // void postDate()
+
     // TODO make create account function
     void _createAccount() async {
       String username = usernameTextController.text;
@@ -81,16 +85,33 @@ class Login extends StatelessWidget {
       //   );
       //   return;
       // }
+      var loginInformation = {"username": username, "password": password};
+      String url = 'http://localhost:8080/profile/create';
+      Map<String, String> headers = {"Content-type": "application/json"};
+      String json = jsonEncode(loginInformation);
+      Response response = await post(url, headers: headers, body: json);
+      int statusCode = response.statusCode;
+      // print(statusCode);
+      var body = jsonDecode(response.body);
+      // print(body);
 
-      // TODO create account by sending to server and redirect page to interest selection
+      if (statusCode == 200) {
+      String token = body["token"];
+      // provide token to shared preferences
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('username', username);
+      prefs.setString('token', token);
 
+      // redirect page to interest selection to finish creating account
+      // TODO should also be passing in token
       Navigator.push(
           context,
           MaterialPageRoute(
               builder: (BuildContext ctx) =>
                   new CreateAccount(username: username)));
+      } else { // error in account creation, duplicate username
+
+      }
     }
 
     final usernameField = TextField(

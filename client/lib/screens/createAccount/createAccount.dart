@@ -77,14 +77,13 @@ class _CreateAccountState extends State<CreateAccount> {
                 disabledColor: Colors.grey[300],
                 onPressed: _selectedActivities.length > 0
                     ? () {
+                        
+
                         // TODO: send mood data to backend with selected activites
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
                                 builder: (BuildContext ctx) =>
                                     new Home(username: this._username)));
-                        if (_selectedActivities.length > 0) {
-                          print(_selectedActivities);
-                        }
                       }
                     : null,
                 child: Text('Confirm Selection'),
