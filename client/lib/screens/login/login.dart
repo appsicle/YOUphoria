@@ -5,6 +5,7 @@ import '../createAccount/createAccount.dart';
 import '../home/home.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:client/main.dart';
 
 class Login extends StatelessWidget {
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
@@ -61,11 +62,9 @@ class Login extends StatelessWidget {
       String password = passwordTextController.text.trim();
 
       var loginInformation = {"username": username, "password": password};
-      Response response = await post('http://localhost:8080/profile/login',
-          headers: {"Content-type": "application/json"},
-          body: jsonEncode(loginInformation));
-
+      Response response = await postData("profile/login", loginInformation);
       var body = jsonDecode(response.body);
+
       // SUCCESS -> redirect to homepage
       if (response.statusCode == 200) {
         String token = body["token"];
@@ -83,8 +82,6 @@ class Login extends StatelessWidget {
         print('login failed');
       }
     }
-
-    void postData(url, json) {}
 
     // TODO make create account function
     void _createAccount() async {
@@ -118,11 +115,12 @@ class Login extends StatelessWidget {
       //   return;
       // }
 
-      var loginInformation = {"username": username, "password": password};
-      Response response = await post('http://localhost:8080/profile/create',
-          headers: {"Content-type": "application/json"},
-          body: jsonEncode(loginInformation));
-
+      var createAccountInformation = {
+        "username": username,
+        "password": password
+      };
+      Response response =
+          await postData("profile/create", createAccountInformation);
       var body = jsonDecode(response.body);
 
       // SUCCESS -> redirect to create account page (to send interests)

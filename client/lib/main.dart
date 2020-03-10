@@ -3,6 +3,8 @@ import 'screens/home/home.dart';
 import 'screens/login/login.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,6 +16,18 @@ Future<void> main() async {
       DefaultCupertinoLocalizations.delegate,
     ],
   ));
+}
+
+Future<Response> postData(endpoint, json) async {
+  Response response = await post('http://localhost:8080/' + endpoint,
+      headers: {"Content-type": "application/json"}, body: jsonEncode(json));
+  return response;
+}
+
+Future<Response> getData(endpoint, json) async {
+  Response response = await get('http://localhost:8080/' + endpoint,
+      headers: {"Content-type": "application/json"});
+  return response;
 }
 
 class DetermineScreen extends StatefulWidget {
