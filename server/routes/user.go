@@ -108,7 +108,7 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	cursor, err := Mongodb.ProfileCollection.Find(ctx, filter)
 	if err != nil {
 		http.Error(res, `{"message":"` + err.Error() + `"}`, http.StatusInternalServerError); return
-	}l
+	}
 	if cursor.Next(ctx){
 		http.Error(res, `{"error":"Duplicate username or email"}`, http.StatusBadRequest); return
 	}

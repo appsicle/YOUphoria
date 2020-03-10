@@ -18,6 +18,27 @@ class Login extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final usernameField = TextField(
+      controller: usernameTextController,
+      obscureText: false,
+      style: style,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Username",
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+    final passwordField = TextField(
+      controller: passwordTextController,
+      obscureText: true,
+      style: style,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Password",
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+
     Material _createButton(text, color, onPressed) {
       return Material(
         elevation: 5.0,
@@ -37,25 +58,38 @@ class Login extends StatelessWidget {
 
     // TODO make login function
     void _login() async {
+      // TODO: strip whitespace
       String username = usernameTextController.text;
       String password = passwordTextController.text;
 
       // TODO pass this information to backend and do next steps based on result
       // option 1: invalid username and password notifcation and return
-      String token = ""; // TODO change this to be from API call
 
-      // option 2: redirect to home page
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('username', username);
-      prefs.setString('token', token);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext ctx) =>
-                  new Home(username: username, token: token)));
+      var loginInformation = {"username": username, "password": password};
+      Response response = await post('http://localhost:8080/profile/login',
+          headers: {"Content-type": "application/json"},
+          body: jsonEncode(loginInformation));
+
+      var body = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        String token = body["token"]; // TODO change this to be from API call
+
+        // option 2: redirect to home page
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('username', username);
+        prefs.setString('token', token);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext ctx) =>
+                    new Home(username: username, token: token)));
+      }else{
+        print('failed');
+        // TODO: display fail on screen
+      }
     }
 
-    // void postDate()
+    void postData(url, json) {}
 
     // TODO make create account function
     void _createAccount() async {
@@ -88,17 +122,15 @@ class Login extends StatelessWidget {
       //   );
       //   return;
       // }
-      var loginInformation = {"username": username, "password": password};
-      String url = 'http://localhost:8080/profile/create';
-      Map<String, String> headers = {"Content-type": "application/json"};
-      String json = jsonEncode(loginInformation);
-      Response response = await post(url, headers: headers, body: json);
-      int statusCode = response.statusCode;
-      // print(statusCode);
-      var body = jsonDecode(response.body);
-      // print(body);
 
-      if (statusCode == 200) {
+      var loginInformation = {"username": username, "password": password};
+      Response response = await post('http://localhost:8080/profile/create',
+          headers: {"Content-type": "application/json"},
+          body: jsonEncode(loginInformation));
+
+      var body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
         String token = body["token"];
         // provide token to shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -116,31 +148,9 @@ class Login extends StatelessWidget {
       }
     }
 
-    final usernameField = TextField(
-      controller: usernameTextController,
-      obscureText: false,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Username",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-    final passwordField = TextField(
-      controller: passwordTextController,
-      obscureText: true,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Password",
-          border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-
     final loginButton = _createButton("Login", Colors.indigoAccent, _login);
     final createAccountButton =
         _createButton("Create Account", Colors.indigoAccent, _createAccount);
-
     return Scaffold(
       body: Center(
         child: Container(
@@ -163,10 +173,6 @@ class Login extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // child: Image.asset(
-                  //   "assets/logo.png", // TODO provide logo
-                  //   fit: BoxFit.contain,
-                  // ),
                 ),
                 SizedBox(height: 30.0),
                 usernameField,
