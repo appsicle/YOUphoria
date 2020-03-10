@@ -25,9 +25,7 @@ class _DetermineScreenState extends State<DetermineScreen> {
   Widget toDisplay = Container();
   @override
   void initState() {
-    checkIfLoggedIn().then((value) {
-      // print("async done");
-    });
+    checkIfLoggedIn();
     super.initState();
   }
 
@@ -36,12 +34,10 @@ class _DetermineScreenState extends State<DetermineScreen> {
     String username = prefs.getString('username');
     String token = prefs.getString('token');
     if (username != null) {
-      // print("logged in");
       setState(() {
         toDisplay = Home(username: username, token: token);
       });
     } else {
-      // print("logged out");
       setState(() {
         toDisplay = Login();
       });
