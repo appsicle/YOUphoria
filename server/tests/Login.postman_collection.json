@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "abfb60c4-79fe-4551-b04e-18f7a7d89417",
+		"name": "Login",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/profile/create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\": \"user161766\",\r\n    \"password\": \"passwohrd\",\r\n    \"email\": \"email@em76ayihl.com\",\r\n    \"name\": \"Joey Smiyth\",\r\n    \"preferences\": [\r\n        {\r\n            \"tag\": \"bowling\",\r\n            \"weight\": 1\r\n        },\r\n        {\r\n            \"tag\": \"checkers\",\r\n            \"weight\": 4\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/profile/create",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profile",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/profile/login",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"user\": \"user9\",\"password\": \"1234567890\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/profile/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profile",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/profile/logout",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "dda7547a-7888-4d3b-9ba7-5056f36e9640",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "1895da00-4dd5-474f-9416-3f67fe6c0f08",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/profile/logout",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profile",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/profile/delete",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "d3f3caa2-f0aa-46dc-8bcc-d7f3e12b7abf",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "1895da00-4dd5-474f-9416-3f67fe6c0f08",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/profile/delete",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profile",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/profile/update",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "87b5b0f0-973e-404d-b30b-2005718e28f0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "1895da00-4dd5-474f-9416-3f67fe6c0f08",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"attribute\" : \"email\",\n\t\"value\" : \"email2@email.com\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/profile/update",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profile",
+						"update"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
