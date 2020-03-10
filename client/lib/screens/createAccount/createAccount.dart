@@ -50,7 +50,7 @@ class _CreateAccountState extends State<CreateAccount> {
                 crossAxisCount: 4,
                 mainAxisSpacing: 10.0,
                 crossAxisSpacing: 10.0,
-                children: List.generate(10, (index) {
+                children: List.generate(_possibleActivities.length, (index) {
                   return Container(
                     height: 20,
                     width: 30,
@@ -73,7 +73,6 @@ class _CreateAccountState extends State<CreateAccount> {
           Expanded(
             flex: 2,
             child: Container(
-              // color: Colors.blueGrey,
               alignment: Alignment.topCenter,
               child: CupertinoButton(
                 color: Colors.blueGrey,

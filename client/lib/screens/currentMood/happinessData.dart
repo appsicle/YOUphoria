@@ -9,6 +9,7 @@ class HappinessData extends StatelessWidget {
   HappinessData({Key key, @required this.username, @required this.token})
       : super(key: key);
 
+  // TODO edit this list to be the categories that Harrison is providing us
   static final List<String> possibleActivities = [
     "Exercising",
     "Partying",
@@ -71,7 +72,7 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 crossAxisCount: 4,
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
-                children: List.generate(10, (index) {
+                children: List.generate(_possibleActivities.length, (index) {
                   return Container(
                     height: 20,
                     width: 30,
@@ -94,7 +95,6 @@ class _EnterMoodDataState extends State<EnterMoodData> {
           Expanded(
             flex: 2,
             child: Container(
-              // color: Colors.blueGrey,
               alignment: Alignment.topCenter,
               child: CupertinoButton(
                 color: Colors.blueGrey,
@@ -102,16 +102,10 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 onPressed: _selectedActivities.length > 0
                     ? () {
                         // TODO: send mood data to backend with selected activites
-                        // Navigator.of(context)
-                        //     .popUntil((route) => route.isFirst);
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
                                 builder: (BuildContext ctx) => new Home(
                                     username: _username, token: _token)));
-                        // should never not be 0 because we disable the button but just in case i guess
-                        if (_selectedActivities.length > 0) {
-                          print(_selectedActivities);
-                        }
                       }
                     : null,
                 child: Text('Confirm Selection'),

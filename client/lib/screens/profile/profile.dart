@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../login/login.dart';
 
+// TODO finalize what is going to go on this screen and DO IT
 class Profile extends StatelessWidget {
   final String username;
   final String token;

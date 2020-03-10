@@ -59,7 +59,7 @@ class SliderState extends State<MoodSlider> {
 
   @override
   Widget build(BuildContext context) {
-    _getCurrentLocation();
+    _updateCurrentLocation();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -89,7 +89,7 @@ class SliderState extends State<MoodSlider> {
             padding: EdgeInsets.all(15.0),
             borderRadius: BorderRadius.circular(15.0),
             onPressed: () {
-              _getCurrentLocation(); // update current location
+              _updateCurrentLocation(); // update current location
               if (_moodValue >= _threshold) {
                 _goToHappinessDataScreen();
               } else {
@@ -130,14 +130,14 @@ class SliderState extends State<MoodSlider> {
     ));
   }
 
-  // TODO do API call to get actual recommendation
   void _goToRecommendationPopup() async {
-    // TODO send mood data to backend
+    // TODO send mood data to backend (API call)
 
     // TODO check if for some reason _currentPosition is null, handle that case
     // can use _currentPosition.latitude and currentPosition.longitude
 
-    // TODO get recommendation with API call
+    // TODO do another API call to get actual recommendation and send in location
+
     int recommendationId = 123; // temp
     String recommendation =
         "temporary recommendation this text area is scrollable btw when it overflows"; // temp
@@ -224,7 +224,7 @@ class SliderState extends State<MoodSlider> {
         rating.toString());
   }
 
-  void _getCurrentLocation() {
+  void _updateCurrentLocation() {
     final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)

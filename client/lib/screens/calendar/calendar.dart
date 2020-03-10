@@ -3,7 +3,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -198,8 +197,7 @@ class SelectedMoodWidget extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        onTap:
-            null, // todo can add something here but I don't think it's necessary?
+        onTap: null,
       ),
     );
   }
