@@ -8,14 +8,19 @@ import 'dart:convert';
 import 'package:client/main.dart';
 
 class Login extends StatelessWidget {
+
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+
   final usernameTextController = TextEditingController();
+
   final passwordTextController = TextEditingController();
-  // Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters
+
   final RegExp validUsernameExpression = new RegExp(r'^[a-zA-Z0-9_]{5,14}$');
-  // Password requirements: 1 letter, 1 number, 1 special character, between 8 and 20 characters
+
   final RegExp validPasswordExpression = new RegExp(
       r'^(?=(?:[^a-z]*[a-z]){1})(?=(?:[^0-9]*[0-9]){1})(?=.*[!-\/:-@\[-`{-~]).{8,20}$');
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +84,13 @@ class Login extends StatelessWidget {
                     new Home(username: username, token: token)));
       } else {
         // TODO: FAIL -> display fail on screen
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Incorrect username/password"),
+          ),
+          barrierDismissible: true,
+        );
         print('login failed');
       }
     }
@@ -90,15 +102,15 @@ class Login extends StatelessWidget {
 
       // TODO uncomment this out when ready to actually check for valid username/password (commented out for easier testing)
       // if (!validUsernameExpression.hasMatch(username)) {
-      //   showDialog(
-      //     context: context,
-      //     builder: (_) => AlertDialog(
-      //       title: Text("Oop! Username Invalid!"),
-      //       content: Text(
-      //           "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
-      //     ),
-      //     barrierDismissible: true,
-      //   );
+        // showDialog(
+        //   context: context,
+        //   builder: (_) => AlertDialog(
+        //     title: Text("Oop! Username Invalid!"),
+        //     content: Text(
+        //         "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
+        //   ),
+        //   barrierDismissible: true,
+        // );
       //   return;
       // }
 
@@ -137,13 +149,20 @@ class Login extends StatelessWidget {
                     new CreateAccount(username: username, token: token)));
       } else {
         // TODO: FAIL -> error in account creation, duplicate username, display this to the user somehow
-        print("create account failed");
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("That username has been taken"),
+          ),
+          barrierDismissible: true,
+        );
       }
     }
 
     final loginButton = _createButton("Login", Colors.indigoAccent, _login);
     final createAccountButton =
         _createButton("Create Account", Colors.indigoAccent, _createAccount);
+
     return Scaffold(
       body: Center(
         child: Container(

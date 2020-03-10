@@ -11,11 +11,11 @@ class CurrentMood extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Your mood of the day.'),
-      ),
-      child: Center(
+    return Scaffold(
+      // navigationBar: CupertinoNavigationBar(
+      //   middle: Text('Your mood of the day.'),
+      // ),
+      body: Center(
         child: AddMood(username: username, token: token),
       ),
     );
@@ -112,23 +112,35 @@ class MoodDisplay extends StatelessWidget {
           width: 300.0,
           height: 300.0,
           decoration: new BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey,
-                blurRadius: 15.0, // soften the shadow
-                spreadRadius: 2.5, //extend the shadow
-                offset: Offset(
-                  10.0, // Move to right 10  horizontally
-                  10.0, // Move to bottom 10 Vertically
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey,
+                    blurRadius: 15.0, // soften the shadow
+                    spreadRadius: 2.5, //extend the shadow
+                    offset: Offset(
+                      10.0, // Move to right 10  horizontally
+                      10.0, // Move to bottom 10 Vertically
+                    ),
+                  )
+                ],
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: todaysColors,
+                  stops: todaysStops,
                 ),
-              )
-            ],
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: todaysColors,
-              stops: todaysStops,
+              ),
+          child: Material(
+            clipBehavior: Clip.hardEdge,
+            color: Colors.transparent,
+            shape: CircleBorder(),
+            child: Ink(
+              child: InkWell(
+                // highlightColor: Colors.yellow[50],
+                splashColor: Colors.black12,
+                onTap: () {},
+              ),
             ),
           ),
         ),

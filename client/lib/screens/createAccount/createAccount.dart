@@ -32,15 +32,16 @@ class _CreateAccountState extends State<CreateAccount> {
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           Container(
-            padding: EdgeInsets.all(20.0),
-            height: 175,
+            padding: EdgeInsets.only(top: 60.0, left: 20, right: 20),
             alignment: Alignment.bottomCenter,
-            child: Text(
-              "Enter in some interests so we can start making personalized recommendations for you!",
-              style: TextStyle(
-                fontSize: 25,
-              ),
-            ),
+             child: Center(
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: <Widget>[
+                   Text('Select some of your interests/hobbbies!', style: TextStyle(fontSize: 20),),
+                 ],
+               ),
+             ),
           ),
           Expanded(
             flex: 9,
