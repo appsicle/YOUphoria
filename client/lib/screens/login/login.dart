@@ -56,14 +56,9 @@ class Login extends StatelessWidget {
       );
     }
 
-    // TODO make login function
     void _login() async {
-      // TODO: strip whitespace
-      String username = usernameTextController.text;
-      String password = passwordTextController.text;
-
-      // TODO pass this information to backend and do next steps based on result
-      // option 1: invalid username and password notifcation and return
+      String username = usernameTextController.text.trim();
+      String password = passwordTextController.text.trim();
 
       var loginInformation = {"username": username, "password": password};
       Response response = await post('http://localhost:8080/profile/login',
@@ -71,21 +66,21 @@ class Login extends StatelessWidget {
           body: jsonEncode(loginInformation));
 
       var body = jsonDecode(response.body);
+      // SUCCESS -> redirect to homepage
       if (response.statusCode == 200) {
-        String token = body["token"]; // TODO change this to be from API call
-
-        // option 2: redirect to home page
+        String token = body["token"];
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('username', username);
         prefs.setString('token', token);
+
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (BuildContext ctx) =>
                     new Home(username: username, token: token)));
-      }else{
-        print('failed');
-        // TODO: display fail on screen
+      } else {
+        // TODO: FAIL -> display fail on screen
+        print('login failed');
       }
     }
 
@@ -93,8 +88,8 @@ class Login extends StatelessWidget {
 
     // TODO make create account function
     void _createAccount() async {
-      String username = usernameTextController.text;
-      String password = passwordTextController.text;
+      String username = usernameTextController.text.trim();
+      String password = passwordTextController.text.trim();
 
       // TODO uncomment this out when ready to actually check for valid username/password (commented out for easier testing)
       // if (!validUsernameExpression.hasMatch(username)) {
@@ -130,21 +125,21 @@ class Login extends StatelessWidget {
 
       var body = jsonDecode(response.body);
 
+      // SUCCESS -> redirect to create account page (to send interests)
       if (response.statusCode == 200) {
         String token = body["token"];
-        // provide token to shared preferences
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('username', username);
         prefs.setString('token', token);
 
-        // redirect page to interest selection to finish creating account
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (BuildContext ctx) =>
                     new CreateAccount(username: username, token: token)));
       } else {
-        // error in account creation, duplicate username, display this to the user somehow
+        // TODO: FAIL -> error in account creation, duplicate username, display this to the user somehow
+        print("create account failed");
       }
     }
 
