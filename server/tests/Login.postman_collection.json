@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"user\": \"user161766\",\r\n    \"password\": \"passwohrd\",\r\n    \"email\": \"email@em76ayihl.com\",\r\n    \"name\": \"Joey Smiyth\",\r\n    \"preferences\": [\r\n        {\r\n            \"tag\": \"bowling\",\r\n            \"weight\": 1\r\n        },\r\n        {\r\n            \"tag\": \"checkers\",\r\n            \"weight\": 4\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"username\": \"user161766\",\r\n    \"password\": \"passwohrd\",\r\n    \"email\": \"email@em76ayihl.com\",\r\n    \"name\": \"Joey Smiyth\",\r\n    \"preferences\": [\r\n        {\r\n            \"tag\": \"bowling\",\r\n            \"weight\": 1\r\n        },\r\n        {\r\n            \"tag\": \"checkers\",\r\n            \"weight\": 4\r\n        }\r\n    ]\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -57,7 +57,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"user\": \"user9\",\"password\": \"1234567890\"}",
+					"raw": "{\"username\": \"user9\",\"password\": \"1234567890\"}",
 					"options": {
 						"raw": {
 							"language": "json"

@@ -37,7 +37,7 @@ type Preference struct {
 // Profile is...
 type Profile struct {
 	ID         	primitive.ObjectID `json:"id"` 
-	UserName  	string             `json:"user" mapstructure:"user"`
+	UserName  	string             `json:"username" mapstructure:"username"`
 	Password  	string			   `json:"password,omitempty"`
 	Email     	string             `json:"email" mapstructure:"email"`
 	FullName  	string             `json:"name" mapstructure:"name"`
@@ -49,7 +49,7 @@ type Profile struct {
 /* ex:
 {
     "id": "5e6385f92f7aec6c1af0b1b4",
-    "user": "user1",
+    "username": "user1",
     "password": "1234567890",
     "email": "email@yahoo.com",
     "name": "Tommy Winston",
@@ -103,12 +103,12 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 
 	// dup username or email
 	filter := bson.M{ "$or": []interface{}{
-		bson.M{"username": reqMap["user"]}, 
+		bson.M{"username": reqMap["username"]}, 
 		bson.M{"email": reqMap["email"]}}}
 	cursor, err := Mongodb.ProfileCollection.Find(ctx, filter)
 	if err != nil {
 		http.Error(res, `{"message":"` + err.Error() + `"}`, http.StatusInternalServerError); return
-	}
+	}l
 	if cursor.Next(ctx){
 		http.Error(res, `{"error":"Duplicate username or email"}`, http.StatusBadRequest); return
 	}
@@ -195,7 +195,7 @@ func LoginProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 
 	// get Profile
 	var profile Profile
-	filter := bson.M{"username": reqMap["user"].(string), "password": reqMap["password"].(string)}
+	filter := bson.M{"username": reqMap["username"].(string), "password": reqMap["password"].(string)}
 	if err := Mongodb.ProfileCollection.FindOne(ctx, filter).Decode(&profile); err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
