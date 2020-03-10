@@ -6,8 +6,10 @@ import '../currentMood/currentMood.dart';
 
 class Home extends StatelessWidget {
   final String username;
+  final String token;
 
-  Home({Key key, @required this.username}) : super(key: key);
+  Home({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   static const String iconFont = 'CupertinoIcons';
 
@@ -35,13 +37,14 @@ class Home extends StatelessWidget {
       tabBuilder: (context, index) {
         if (index == 0) {
           return CupertinoTabView(
-              builder: (context) => Calendar(username: username));
+              builder: (context) => Calendar(username: username, token: token));
         } else if (index == 1) {
           return CupertinoTabView(
-              builder: (context) => CurrentMood(username: username));
+              builder: (context) =>
+                  CurrentMood(username: username, token: token));
         } else {
           return CupertinoTabView(
-              builder: (context) => Profile(username: username));
+              builder: (context) => Profile(username: username, token: token));
         }
       },
     );

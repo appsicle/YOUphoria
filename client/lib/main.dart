@@ -34,10 +34,11 @@ class _DetermineScreenState extends State<DetermineScreen> {
   Future checkIfLoggedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String username = prefs.getString('username');
+    String token = prefs.getString('token');
     if (username != null) {
       // print("logged in");
       setState(() {
-        toDisplay = Home(username: username);
+        toDisplay = Home(username: username, token: token);
       });
     } else {
       // print("logged out");

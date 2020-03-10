@@ -5,8 +5,10 @@ import '../login/login.dart';
 
 class Profile extends StatelessWidget {
   final String username;
+  final String token;
 
-  Profile({Key key, @required this.username}) : super(key: key);
+  Profile({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   Container profileData(data) {
     return Container(
@@ -60,8 +62,9 @@ class Profile extends StatelessWidget {
                   onPressed: () async {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
-                    prefs.remove(
-                        'username'); // logout so remove this cached data
+                    // logout so remove this cached data
+                    prefs.remove('username');
+                    prefs.remove('token');
                     Navigator.of(context, rootNavigator: true).pushReplacement(
                         MaterialPageRoute(
                             builder: (BuildContext ctx) => new Login()));

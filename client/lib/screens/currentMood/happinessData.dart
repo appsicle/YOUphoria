@@ -4,8 +4,10 @@ import '../home/home.dart';
 
 class HappinessData extends StatelessWidget {
   final String username;
+  final String token;
 
-  HappinessData({Key key, @required this.username}) : super(key: key);
+  HappinessData({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   static final List<String> possibleActivities = [
     "Exercising",
@@ -27,18 +29,20 @@ class HappinessData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: EnterMoodData(username),
+      child: EnterMoodData(username, token),
     );
   }
 }
 
 class EnterMoodData extends StatefulWidget {
   final String _username;
+  final String _token;
 
-  EnterMoodData(this._username);
+  EnterMoodData(this._username, this._token);
 
   @override
-  _EnterMoodDataState createState() => _EnterMoodDataState(this._username);
+  _EnterMoodDataState createState() =>
+      _EnterMoodDataState(this._username, this._token);
 }
 
 class _EnterMoodDataState extends State<EnterMoodData> {
@@ -46,8 +50,9 @@ class _EnterMoodDataState extends State<EnterMoodData> {
   final List<String> _possibleActivities =
       HappinessData.getPossibleActivities();
   final String _username;
+  final String _token;
 
-  _EnterMoodDataState(this._username);
+  _EnterMoodDataState(this._username, this._token);
 
   @override
   Widget build(BuildContext context) {
@@ -101,8 +106,8 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                         //     .popUntil((route) => route.isFirst);
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext ctx) =>
-                                    new Home(username: _username)));
+                                builder: (BuildContext ctx) => new Home(
+                                    username: _username, token: _token)));
                         // should never not be 0 because we disable the button but just in case i guess
                         if (_selectedActivities.length > 0) {
                           print(_selectedActivities);

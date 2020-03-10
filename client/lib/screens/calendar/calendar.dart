@@ -18,8 +18,10 @@ final Map<DateTime, List> _holidays = {
 
 class Calendar extends StatelessWidget {
   final String username;
+  final String token;
 
-  Calendar({Key key, @required this.username}) : super(key: key);
+  Calendar({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

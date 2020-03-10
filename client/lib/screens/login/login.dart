@@ -42,14 +42,17 @@ class Login extends StatelessWidget {
 
       // TODO pass this information to backend and do next steps based on result
       // option 1: invalid username and password notifcation and return
+      String token = ""; // TODO change this to be from API call
 
       // option 2: redirect to home page
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('username', username);
+      prefs.setString('token', token);
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (BuildContext ctx) => new Home(username: username)));
+              builder: (BuildContext ctx) =>
+                  new Home(username: username, token: token)));
     }
 
     // void postDate()
@@ -96,21 +99,20 @@ class Login extends StatelessWidget {
       // print(body);
 
       if (statusCode == 200) {
-      String token = body["token"];
-      // provide token to shared preferences
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('username', username);
-      prefs.setString('token', token);
+        String token = body["token"];
+        // provide token to shared preferences
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setString('username', username);
+        prefs.setString('token', token);
 
-      // redirect page to interest selection to finish creating account
-      // TODO should also be passing in token
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (BuildContext ctx) =>
-                  new CreateAccount(username: username)));
-      } else { // error in account creation, duplicate username
-
+        // redirect page to interest selection to finish creating account
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext ctx) =>
+                    new CreateAccount(username: username, token: token)));
+      } else {
+        // error in account creation, duplicate username, display this to the user somehow
       }
     }
 

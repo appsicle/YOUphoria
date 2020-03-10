@@ -5,17 +5,20 @@ import '../currentMood/happinessData.dart';
 
 class CreateAccount extends StatefulWidget {
   final String username;
+  final String token;
 
-  CreateAccount({Key key, @required this.username}) : super(key: key);
+  CreateAccount({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   @override
-  _CreateAccountState createState() => _CreateAccountState(username);
+  _CreateAccountState createState() => _CreateAccountState(username, token);
 }
 
 class _CreateAccountState extends State<CreateAccount> {
-  String _username;
+  final String _username;
+  final String _token;
 
-  _CreateAccountState(this._username);
+  _CreateAccountState(this._username, this._token);
 
   List<String> _selectedActivities = [];
   final List<String> _possibleActivities =
@@ -77,13 +80,12 @@ class _CreateAccountState extends State<CreateAccount> {
                 disabledColor: Colors.grey[300],
                 onPressed: _selectedActivities.length > 0
                     ? () {
-                        
-
                         // TODO: send mood data to backend with selected activites
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext ctx) =>
-                                    new Home(username: this._username)));
+                                builder: (BuildContext ctx) => new Home(
+                                    username: this._username,
+                                    token: this._token)));
                       }
                     : null,
                 child: Text('Confirm Selection'),

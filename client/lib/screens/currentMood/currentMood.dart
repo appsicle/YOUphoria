@@ -4,8 +4,10 @@ import './newMood.dart';
 
 class CurrentMood extends StatelessWidget {
   final String username;
+  final String token;
 
-  CurrentMood({Key key, @required this.username}) : super(key: key);
+  CurrentMood({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +16,7 @@ class CurrentMood extends StatelessWidget {
         middle: Text('Your mood of the day.'),
       ),
       child: Center(
-        child: AddMood(username: username),
+        child: AddMood(username: username, token: token),
       ),
     );
   }
@@ -22,8 +24,10 @@ class CurrentMood extends StatelessWidget {
 
 class AddMood extends StatelessWidget {
   final String username;
+  final String token;
 
-  AddMood({Key key, @required this.username}) : super(key: key);
+  AddMood({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +39,7 @@ class AddMood extends StatelessWidget {
             height: 88, // estimated height of top title bar
           ),
           MoodDisplay(),
-          AddMoodButton(username: username),
+          AddMoodButton(username: username, token: token),
         ]);
   }
 }
@@ -135,8 +139,10 @@ class MoodDisplay extends StatelessWidget {
 
 class AddMoodButton extends StatelessWidget {
   final String username;
+  final String token;
 
-  AddMoodButton({Key key, @required this.username}) : super(key: key);
+  AddMoodButton({Key key, @required this.username, @required this.token})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +156,7 @@ class AddMoodButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(35.0),
           onPressed: () {
             Navigator.of(context).push(CupertinoPageRoute(
-              builder: (context) => NewMood(username: username),
+              builder: (context) => NewMood(username: username, token: token),
             ));
           },
           color: Colors.indigoAccent,
