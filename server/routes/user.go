@@ -39,8 +39,6 @@ type Profile struct {
 	ID         	primitive.ObjectID `json:"id"` 
 	UserName  	string             `json:"username" mapstructure:"username"`
 	Password  	string			   `json:"password,omitempty"`
-	Email     	string             `json:"email" mapstructure:"email"`
-	FullName  	string             `json:"name" mapstructure:"name"`
 	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
 	Calendar  	[]Day			   `json:"calendar"`
 	CreatedOn 	string             `json:"createdOn"`
@@ -51,8 +49,6 @@ type Profile struct {
     "id": "5e6385f92f7aec6c1af0b1b4",
     "username": "user1",
     "password": "1234567890",
-    "email": "email@yahoo.com",
-    "name": "Tommy Winston",
     "preferences": [
         {
             "tag": "bowling",
@@ -103,8 +99,7 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 
 	// dup username or email
 	filter := bson.M{ "$or": []interface{}{
-		bson.M{"username": reqMap["username"]}, 
-		bson.M{"email": reqMap["email"]}}}
+		bson.M{"username": reqMap["username"]}}
 	cursor, err := Mongodb.ProfileCollection.Find(ctx, filter)
 	if err != nil {
 		http.Error(res, `{"message":"` + err.Error() + `"}`, http.StatusInternalServerError); return
