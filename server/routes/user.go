@@ -19,13 +19,8 @@ import (
 // Mood is...
 type Mood struct {
 	Mood	int		`json:"mood"`
-	Time 	string	`json:"time"`
-}
-
-// Day is...
-type Day struct {
-	Moods	[]Mood	`json:"moods"`
 	Date 	string	`json:"date"`
+	Time 	string	`json:"time"`
 }
 
 // Preference is...
@@ -40,7 +35,7 @@ type Profile struct {
 	UserName  	string             `json:"username" mapstructure:"username"`
 	Password  	string			   `json:"password,omitempty"`
 	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
-	Calendar  	[]Day			   `json:"calendar"`
+	Calendar  	[]Mood			   `json:"calendar"`
 	CreatedOn 	string             `json:"createdOn"`
 }
 
@@ -60,18 +55,10 @@ type Profile struct {
         }
     ],
     "calendar": [
-		{"date": "098654", "moods": [
-			{"mood": 3, "time": "0987"}, 
-			{"mood": 3, "time": "0987"}, 
-			{"mood": 3, "time": "0987"}
-			]
-		},
-		{"date": "098654", "moods": [
-			{"mood": 3, "time": "0987"}, 
-			{"mood": 3, "time": "0987"}, 
-			{"mood": 3, "time": "0987"}
-			]
-		}
+		{"mood": 0, "date": "1/2/13", "time": "02:32"},
+		{"mood": 3, "date": "1/3/13", "time": "02:32"},
+		{"mood": 3, "date": "1/4/13", "time": "02:32"},
+		{"mood": 5, "date": "1/5/13", "time": "02:32"},
 	],
     "createdOn": "2020-03-07 03:31:05.1134445 -0800 PST m=+169.901537401"
 }
@@ -99,7 +86,7 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 
 	// dup username or email
 	filter := bson.M{ "$or": []interface{}{
-		bson.M{"username": reqMap["username"]}}
+		bson.M{"username": reqMap["username"]}}}
 	cursor, err := Mongodb.ProfileCollection.Find(ctx, filter)
 	if err != nil {
 		http.Error(res, `{"message":"` + err.Error() + `"}`, http.StatusInternalServerError); return
