@@ -39,6 +39,15 @@ type Profile struct {
 	CreatedOn 	string             `json:"createdOn"`
 }
 
+// SafeProfile is...
+type SafeProfile struct {
+	ID         	primitive.ObjectID `json:"id"` 
+	UserName  	string             `json:"username" mapstructure:"username"`
+	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
+	Calendar  	[]Mood			   `json:"calendar"`
+	CreatedOn 	string             `json:"createdOn"`
+}
+
 /* ex:
 {
     "id": "5e6385f92f7aec6c1af0b1b4",
@@ -149,13 +158,13 @@ func GetProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// get Profile
-	var profile Profile
+	var profile SafeProfile
 	if err := Mongodb.ProfileCollection.FindOne(ctx, bson.M{"id": token.PID}).Decode(&profile); err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
 	}
-	profile.Password = ""	// TODO projection
+	// profile.Password = ""	// TODO projection
 
 	log.WithFields(log.Fields{"res": profile,}).Info("GetProfileEndpoint: outgoing result")
 	json.NewEncoder(res).Encode(profile)

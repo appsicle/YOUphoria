@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -24,7 +25,6 @@ type YelpReq struct {
 // ex: https://api.yelp.com/v3/businesses/search?term=taco%20truck&location=irvine&sort_by=rating&radius=20000
 
 var queryStem = "https://api.yelp.com/v3/businesses/search?"
-var yelpToken = ""
 
 func GetYelpResults(res http.ResponseWriter, req *http.Request){
 	res.Header().Set("content-type", "application/json")
@@ -51,7 +51,7 @@ func GetYelpResults(res http.ResponseWriter, req *http.Request){
 		return
 	}
 	yelpReq.Header.Set("content-type", "application/json")
-	yelpReq.Header.Set("authorization", yelpToken)
+	yelpReq.Header.Set("authorization", os.Getenv("YELPTOKEN"))
 
 	client := &http.Client{}
 	yelpRes, err := client.Do(yelpReq)
@@ -65,6 +65,7 @@ func GetYelpResults(res http.ResponseWriter, req *http.Request){
 		return
 	}
 
-	log.WithFields(log.Fields{"res": reqMap,}).Info("GetYelpResults: outgoing result")
+	// log.WithFields(log.Fields{"res": reqMap,}).Info("GetYelpResults: outgoing result")
+	log.WithFields(log.Fields{"res":"its working"}).Info("GetYelpResults: it's working")
 	json.NewEncoder(res).Encode(reqMap)
 }
