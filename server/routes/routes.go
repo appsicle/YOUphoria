@@ -22,4 +22,6 @@ func ConnectRoutes(r * mux.Router){
 	auth_r.HandleFunc("/profile/delete", DeleteProfileEndpoint).Methods("GET")
 
 	auth_r.HandleFunc("/backend/yelp", GetYelpResults).Methods("POST")
+
+	auth_r.HandleFunc("/recommend", GetRecommendationEndpoint).Methods("GET")
 }

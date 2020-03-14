@@ -19,7 +19,7 @@ import (
 // Preference is...
 type Preference struct {
 	Tag		string	`json:"tag"`
-	Weight	int		`json:"weight"`
+	Weight	string	`json:"weight"`
 }
 
 // Profile is...
@@ -126,6 +126,7 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(resMap)
 }
 
+
 // GetProfileEndpoint is...
 func GetProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("content-type", "application/json")
@@ -147,7 +148,6 @@ func GetProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
 	}
-	// profile.Password = ""	// TODO projection
 
 	log.WithFields(log.Fields{"res": profile,}).Info("GetProfileEndpoint: outgoing result")
 	json.NewEncoder(res).Encode(profile)

@@ -25,3 +25,4 @@ func ConnectDB() {
 	ProfileCollection = Client.Database("YOUphoria").Collection("profiles")
 	TokenCollection = Client.Database("YOUphoria").Collection("tokens")
 }
+

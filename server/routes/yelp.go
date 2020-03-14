@@ -14,17 +14,20 @@ import (
 
 // YelpReq is...
 type YelpReq struct {
-	Term 	 string		`json:"term"`				// mandatory
-	Location string		`json:"location"`			// mandatory
-	Radius 	 int		`json:"radius,omitempty"`	// max = 40000 ~25 miles
-	Limit	 int		`jons:"limit,omitempty"`	// default = 20, max = 50
-	SortBy	 string		`json:"sort_by,omitempty"`	// rating, distance, review_count, default = best_match
-	Price 	 string		`json:"price,omitempty"`	// $, $$, $$$, $$$$
+	// Term 	  string		`json:"term"`				// mandatory
+	Category  string 		`json:"category"`
+	Location  string		`json:"location,omitempty"`
+	Latitude  string		`json:"latitude"`
+	Longitude string 		`json:"longitude"`
+	Radius 	  int			`json:"radius,omitempty"`	// max = 40000 ~25 miles
+	Limit	  int			`jons:"limit,omitempty"`	// default = 20, max = 50
+	SortBy	  string		`json:"sort_by,omitempty"`	// rating, distance, review_count, default = best_match
 }
 
 // ex: https://api.yelp.com/v3/businesses/search?term=taco%20truck&location=irvine&sort_by=rating&radius=20000
 
-var queryStem = "https://api.yelp.com/v3/businesses/search?"
+var QueryStem = "https://api.yelp.com/v3/events?"
+
 
 func GetYelpResults(res http.ResponseWriter, req *http.Request){
 	res.Header().Set("content-type", "application/json")
@@ -43,7 +46,7 @@ func GetYelpResults(res http.ResponseWriter, req *http.Request){
 	for key, val := range reqMap {
 		queryTerms.Add(key, fmt.Sprintf("%v", val))
 	}
-	query := queryStem + queryTerms.Encode()
+	query := QueryStem + queryTerms.Encode()
 	yelpReq, err := http.NewRequestWithContext(ctx, "GET", query, nil)
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
@@ -65,7 +68,6 @@ func GetYelpResults(res http.ResponseWriter, req *http.Request){
 		return
 	}
 
-	// log.WithFields(log.Fields{"res": reqMap,}).Info("GetYelpResults: outgoing result")
 	log.WithFields(log.Fields{"res":"its working"}).Info("GetYelpResults: it's working")
 	json.NewEncoder(res).Encode(reqMap)
 }
