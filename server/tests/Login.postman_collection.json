@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"user161766\",\r\n    \"password\": \"passwohrd\",\r\n    \"email\": \"email@em76ayihl.com\",\r\n    \"name\": \"Joey Smiyth\",\r\n    \"preferences\": [\r\n        {\r\n            \"tag\": \"bowling\",\r\n            \"weight\": 1\r\n        },\r\n        {\r\n            \"tag\": \"checkers\",\r\n            \"weight\": 4\r\n        }\r\n    ]\r\n}",
+					"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -57,7 +57,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"username\": \"user9\",\"password\": \"1234567890\"}",
+					"raw": "{\n    \"username\": \"user1\",\n    \"password\": \"password\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -86,7 +86,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "dda7547a-7888-4d3b-9ba7-5056f36e9640",
+							"value": "2972d281-daca-40f3-90e7-81f13ac5e16c",
 							"type": "string"
 						}
 					]
@@ -96,25 +96,25 @@
 					{
 						"key": "Content-Type",
 						"name": "Content-Type",
-						"value": "application/json",
-						"type": "text"
+						"type": "text",
+						"value": "application/json"
 					},
 					{
 						"key": "",
-						"value": "1895da00-4dd5-474f-9416-3f67fe6c0f08",
 						"type": "text",
+						"value": "1895da00-4dd5-474f-9416-3f67fe6c0f08",
 						"disabled": true
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/profile/logout",
+					"raw": "localhost:8080/profile/getProfile",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"profile",
-						"logout"
+						"getProfile"
 					]
 				}
 			},
@@ -208,6 +208,48 @@
 					"path": [
 						"profile",
 						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/profile/getProfile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "62ba3d9a-3d5d-4082-9a52-6c30ff184af8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "1895da00-4dd5-474f-9416-3f67fe6c0f08",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/profile/getProfile",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"profile",
+						"getProfile"
 					]
 				}
 			},

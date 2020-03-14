@@ -1,0 +1,181 @@
+{
+	"info": {
+		"_postman_id": "19c3e2a3-57cd-44b2-8dc5-10692f7402b0",
+		"name": "Mood",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/mood/addMood",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"mood\": \"sad\",\n    \"date\": \"2020-02-06\",\n    \"time\": \"13:50:21\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/mood/addMood",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mood",
+						"addMood"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/mood/getMoodsForDay",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"date\" : \"2020-02-06\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/mood/getMoodsForDay",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mood",
+						"getMoodsForDay"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/mood/getAllMoods",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/mood/getAllMoods",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"mood",
+						"getAllMoods"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/recomendation/addRecoemmendationFeedback",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"tag\": \"film\",\n   \"liked\": \"0\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recommendation/addRecommendationFeedback",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recommendation",
+						"addRecommendationFeedback"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
