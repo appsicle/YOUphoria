@@ -16,12 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Preference is...
-type Preference struct {
-	Tag		string	`json:"tag"`
-	Weight	string	`json:"weight"`
-}
-
 // Profile is...
 type Profile struct {
 	ID         	primitive.ObjectID `json:"id"` 
@@ -45,14 +39,8 @@ type SafeProfile struct {
     "username": "user1",
     "password": "1234567890",
     "preferences": [
-        {
-            "tag": "bowling",
-            "weight": 1
-        },
-        {
-            "tag": "rowing",
-            "weight": 4
-        }
+        { "tag": "bowling", "weight": "1" },
+        { "tag": "rowing", "weight": "4" }
     ],
     "calendar": [
 		{"mood": 0, "date": "1/2/13", "time": "02:32"},
