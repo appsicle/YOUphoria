@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-	"strings"
+	// "strings"
 
 	Mongodb "../mongodb"
 	log "github.com/sirupsen/logrus"
@@ -15,13 +15,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
-// Mood is...
-type Mood struct {
-	Mood	int		`json:"mood"`
-	Date 	string	`json:"date"`
-	Time 	string	`json:"time"`
-}
 
 // Preference is...
 type Preference struct {
@@ -41,11 +34,9 @@ type Profile struct {
 
 // SafeProfile is...
 type SafeProfile struct {
-	ID         	primitive.ObjectID `json:"id"` 
 	UserName  	string             `json:"username" mapstructure:"username"`
 	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
 	Calendar  	[]Mood			   `json:"calendar"`
-	CreatedOn 	string             `json:"createdOn"`
 }
 
 /* ex:
@@ -93,9 +84,8 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	}
 	log.WithFields(log.Fields{"req body": reqMap,}).Info("CreateProfileEndpoint: incoming request")
 
-	// dup username or email
-	filter := bson.M{ "$or": []interface{}{
-		bson.M{"username": reqMap["username"]}}}
+	// dup username
+	filter := bson.M{"username": reqMap["username"]}
 	cursor, err := Mongodb.ProfileCollection.Find(ctx, filter)
 	if err != nil {
 		http.Error(res, `{"message":"` + err.Error() + `"}`, http.StatusInternalServerError); return
@@ -142,24 +132,17 @@ func GetProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// get token
-	reqAuthHeader := req.Header.Get("Authorization")
-	reqToken := strings.Split(reqAuthHeader, "Bearer ")[1]
-
-	log.WithFields(log.Fields{"req token": reqToken,}).Info("CreateProfileEndpoint: incoming request")
-
-	// get PID by token
-	var token Token
-	token.Token = reqToken
-	if err := Mongodb.TokenCollection.FindOne(ctx, bson.M{"token": token.Token}).Decode(&token); err != nil {
-		res.WriteHeader(http.StatusInternalServerError)
-		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.WithFields(log.Fields{"req body": reqMap,}).Info("GetProfileEndpoint: incoming request")
 
-	// get Profile
+	id, _ := primitive.ObjectIDFromHex(reqMap["id"].(string))
 	var profile SafeProfile
-	if err := Mongodb.ProfileCollection.FindOne(ctx, bson.M{"id": token.PID}).Decode(&profile); err != nil {
+	if err := Mongodb.ProfileCollection.FindOne(ctx, bson.M{"id":id}).Decode(&profile); err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
@@ -222,13 +205,16 @@ func LogoutProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// get token
-	reqAuthHeader := req.Header.Get("Authorization")
-	reqToken := strings.Split(reqAuthHeader, "Bearer ")[1]
-	log.WithFields(log.Fields{"req token": reqToken,}).Info("LogoutProfileEndpoint: incoming request")
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.WithFields(log.Fields{"req body": reqMap,}).Info("LogoutProfileEndpoint: incoming request")
 
 	// delete token
-	_, err := Mongodb.TokenCollection.DeleteOne(ctx, bson.M{"token": reqToken})
+	_, err := Mongodb.TokenCollection.DeleteOne(ctx, bson.M{"token": reqMap["token"]})
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
@@ -244,29 +230,17 @@ func UpdateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// get token
-	reqAuthHeader := req.Header.Get("Authorization")
-	reqToken := strings.Split(reqAuthHeader, "Bearer ")[1]
-
 	// map req body
 	reqMap := make(map[string]interface{})
 	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.WithFields(log.Fields{"req token": reqToken, "req body": reqMap,}).Info("UpdateProfileEndpoint: incoming request")
-
-	// get PID by token
-	var token Token
-	token.Token = reqToken
-	if err := Mongodb.TokenCollection.FindOne(ctx, bson.M{"token": token.Token}).Decode(&token); err != nil {
-		res.WriteHeader(http.StatusInternalServerError)
-		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
-		return
-	}
+	log.WithFields(log.Fields{"req body": reqMap,}).Info("UpdateProfileEndpoint: incoming request")
 
 	// update profile
-	filter := bson.M{"id": bson.M{"$eq": token.PID,},}
+	id, _ := primitive.ObjectIDFromHex(reqMap["id"].(string))
+	filter := bson.M{"id": id,}
 	update := bson.M{"$set": bson.M{reqMap["attribute"].(string): reqMap["value"].(string)}}
 	_, err := Mongodb.ProfileCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
@@ -284,23 +258,16 @@ func DeleteProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// get token
-	reqAuthHeader := req.Header.Get("Authorization")
-	reqToken := strings.Split(reqAuthHeader, "Bearer ")[1]
-
-	log.WithFields(log.Fields{"req token": reqToken,}).Info("DeleteProfileEndpoint: incoming request")
-
-	// get PID by token
-	var token Token
-	token.Token = reqToken
-	if err := Mongodb.TokenCollection.FindOne(ctx, bson.M{"token": token.Token}).Decode(&token); err != nil {
-		res.WriteHeader(http.StatusInternalServerError)
-		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
+	log.WithFields(log.Fields{"req body": reqMap,}).Info("DeleteProfileEndpoint: incoming request")
 
 	// delete token
-	_, err := Mongodb.TokenCollection.DeleteOne(ctx, bson.M{"token": reqToken})
+	_, err := Mongodb.TokenCollection.DeleteOne(ctx, bson.M{"token": reqMap["token"]})
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
@@ -308,7 +275,8 @@ func DeleteProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	}
 
 	// delete profile
-	_, err = Mongodb.ProfileCollection.DeleteOne(ctx, bson.M{"id": token.PID})
+	id, _ := primitive.ObjectIDFromHex(reqMap["id"].(string))
+	_, err = Mongodb.ProfileCollection.DeleteOne(ctx, bson.M{"id": id})
 	if err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
