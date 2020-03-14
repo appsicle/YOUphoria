@@ -29,7 +29,7 @@ func ConnectRoutes(r * mux.Router){
 
 	auth_r.HandleFunc("/backend/yelp", GetYelpResults).Methods("POST")
 
-	auth_r.HandleFunc("/recommendation/getRecommendation", GetRecommendationEndpoint).Methods("GET")
+	auth_r.HandleFunc("/recommendation/getRecommendation", GetRecommendationEndpoint).Methods("POST")
 	auth_r.HandleFunc("/recommendation/sendUserInterests", SendUserInterestsEndpoint).Methods("POST")
 	auth_r.HandleFunc("/recommendation/getUserInterests", GetUserInterestsEndpoint).Methods("GET")
 	auth_r.HandleFunc("/recommendation/addRecommendationFeedback", AddRecommendationFeedbackEndpoint).Methods("POST")
