@@ -103,6 +103,8 @@ func CreateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	profile.ID = primitive.NewObjectID()
 	profile.CreatedOn = time.Now().String()
 	profile.Password = reqMap["password"].(string)	// TODO hash password
+	profile.Calendar = []Mood{}
+	profile.Preferences = []Preference{}
 	if _, err := Mongodb.ProfileCollection.InsertOne(ctx, profile); err != nil {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))

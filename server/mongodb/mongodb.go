@@ -8,6 +8,8 @@ import (
 
     "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 )
 
 var Client *mongo.Client
@@ -26,3 +28,7 @@ func ConnectDB() {
 	TokenCollection = Client.Database("YOUphoria").Collection("tokens")
 }
 
+func StoOI(s string) primitive.ObjectID{
+	ss, _ := primitive.ObjectIDFromHex(s)
+	return ss
+}

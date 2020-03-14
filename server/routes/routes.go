@@ -21,6 +21,12 @@ func ConnectRoutes(r * mux.Router){
 	auth_r.HandleFunc("/profile/update", UpdateProfileEndpoint).Methods("POST")
 	auth_r.HandleFunc("/profile/delete", DeleteProfileEndpoint).Methods("GET")
 
+	auth_r.HandleFunc("/mood/addMood", AddMoodEndpoint).Methods("POST")
+	auth_r.HandleFunc("/mood/getAllMoods", getAllMoodsEndpoint).Methods("GET")
+	auth_r.HandleFunc("/mood/getMoodsForDay", GetMoodsForDayEndpoint).Methods("POST")
+
+
+
 	auth_r.HandleFunc("/backend/yelp", GetYelpResults).Methods("POST")
 
 	auth_r.HandleFunc("/recommend", GetRecommendationEndpoint).Methods("GET")
