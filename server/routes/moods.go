@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-	"strconv"
 
 	Mongodb "../mongodb"
 	log "github.com/sirupsen/logrus"
@@ -15,7 +14,7 @@ import (
 
 // Mood is...
 type Mood struct {
-	Mood	int		`json:"mood"`
+	Mood	string	`json:"mood"`
 	Date 	string	`json:"date"`
 	Time 	string	`json:"time"`
 }
@@ -40,7 +39,7 @@ func AddMoodEndpoint(res http.ResponseWriter, req *http.Request) {
 	log.WithFields(log.Fields{"req body": reqMap,}).Info("AddMoodEndpoint: incoming request")
 
 	var mood Mood
-	mood.Mood, _ = strconv.Atoi(reqMap["mood"].(string))
+	mood.Mood = reqMap["mood"].(string)
 	mood.Date = reqMap["date"].(string)
 	mood.Time = reqMap["time"].(string)
 
