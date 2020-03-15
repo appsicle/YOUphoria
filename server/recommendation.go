@@ -32,7 +32,7 @@ func (p Preference) String() string {
     return fmt.Sprintf(`'Tag': '%s', 'Weight': '%s'`, p.Tag, p.Weight)
 }
 
-func getYelpResults(yelpreq *YelpReq) (map[string]interface{}, error) {
+func getYelpResults(yelpreq *YelpReq) (interface{}, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -52,10 +52,12 @@ func getYelpResults(yelpreq *YelpReq) (map[string]interface{}, error) {
 	client := &http.Client{}
 	yelpRes, err := client.Do(yelpReq)
 	if err != nil { return nil, err }
-	if err := json.NewDecoder(yelpRes.Body).Decode(&reqMap); err != nil { return nil, err }
+
+	resMap := make(map[string]interface{})
+	if err := json.NewDecoder(yelpRes.Body).Decode(&resMap); err != nil { return nil, err }
 	
-	log.WithFields(log.Fields{"res": reqMap}).Info("GetYelpResults: it's working")
-	return reqMap, nil
+	log.WithFields(log.Fields{"res": resMap}).Info("GetYelpResults: it's working")
+	return resMap["events"].([]interface{})[0], nil
 }
 
 
