@@ -1,0 +1,139 @@
+{
+	"info": {
+		"_postman_id": "fb8dd78f-5c18-4353-95e6-b486e4c5a310",
+		"name": "Recommendation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/recomendation/sendUserInterests",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"interests\": [\n        \"music\",\n        \"film\"\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recommendation/sendUserInterests",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recommendation",
+						"sendUserInterests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/recomendation/getUserInterests",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "localhost:8080/recommendation/getUserInterests",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recommendation",
+						"getUserInterests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/recommendation/getRecommendation",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"latitude\" : \"33.684566\",\n\t\"longitude\": \"-117.826508\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recommendation/getRecommendation",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recommendation",
+						"getRecommendation"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

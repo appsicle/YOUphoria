@@ -1,0 +1,174 @@
+{
+	"info": {
+		"_postman_id": "f7e1135f-5a55-48a7-b45d-1f6290bb772f",
+		"name": "Yelp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://api.yelp.com/v3/graphql",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "N9qcpKyP2tgirOpSZv-KAG3o3C4KNs3onoZ16w2Xpu7hDrBuxTCXOizcUjyIOPxCBNwbOT6i5BoBGYZI2TR5HCV_whm4fA2wm8fM8wCiKyskb0duurwmj3yUvVZPXnYx",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "{\r\n    event_search(location: \"irvine\", categories: [\"pets\"], start_date: 1582423410) {\r\n        events {\r\n            name\r\n            time_start\r\n            time_end\r\n        }\r\n    }\r\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "https://api.yelp.com/v3/graphql",
+					"protocol": "https",
+					"host": [
+						"api",
+						"yelp",
+						"com"
+					],
+					"path": [
+						"v3",
+						"graphql"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://api.yelp.com/v3/businesses/search?categories=artclasses&location=92617&limit=1",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "N9qcpKyP2tgirOpSZv-KAG3o3C4KNs3onoZ16w2Xpu7hDrBuxTCXOizcUjyIOPxCBNwbOT6i5BoBGYZI2TR5HCV_whm4fA2wm8fM8wCiKyskb0duurwmj3yUvVZPXnYx",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.yelp.com/v3/businesses/search?categories=artclasses&location=92617&limit=1",
+					"protocol": "https",
+					"host": [
+						"api",
+						"yelp",
+						"com"
+					],
+					"path": [
+						"v3",
+						"businesses",
+						"search"
+					],
+					"query": [
+						{
+							"key": "term",
+							"value": "burrito",
+							"disabled": true
+						},
+						{
+							"key": "categories",
+							"value": "artclasses"
+						},
+						{
+							"key": "location",
+							"value": "92617"
+						},
+						{
+							"key": "limit",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://api.yelp.com/v3/events?categories=food-and-drink&latitude=33.684566&longitude=-117.826508",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "d_91OXeGw0mxDorygYPs8oQkfeCoEcXrZFamJr8aph5v9OLBjuzV1g_rvoq4SnXi-nSOzxf6nCYTPoems74jXa19rY0MKDhogYqgYJuO9xQkgUiFf5j15FOZ8QJmXnYx",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.yelp.com/v3/events?categories=food-and-drink&latitude=33.684566&longitude=-117.826508",
+					"protocol": "https",
+					"host": [
+						"api",
+						"yelp",
+						"com"
+					],
+					"path": [
+						"v3",
+						"events"
+					],
+					"query": [
+						{
+							"key": "location",
+							"value": "92617",
+							"disabled": true
+						},
+						{
+							"key": "start_date",
+							"value": "1583718356 ",
+							"disabled": true
+						},
+						{
+							"key": "categories",
+							"value": "food-and-drink"
+						},
+						{
+							"key": "sort_by",
+							"value": "asc",
+							"disabled": true
+						},
+						{
+							"key": "sort_on",
+							"value": "time_start",
+							"disabled": true
+						},
+						{
+							"key": "radius",
+							"value": "40000",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "50",
+							"disabled": true
+						},
+						{
+							"key": "latitude",
+							"value": "33.684566"
+						},
+						{
+							"key": "longitude",
+							"value": "-117.826508"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
