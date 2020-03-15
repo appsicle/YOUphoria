@@ -4,9 +4,8 @@ import './happinessData.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'dart:convert';
 import 'package:client/http.dart';
-import 'currentMood.dart';
+import '../home/home.dart';
 
 class NewMood extends StatelessWidget {
   final String username;
@@ -229,7 +228,7 @@ class SliderState extends State<MoodSlider> {
     Navigator.of(context, rootNavigator: true).pushReplacement(
         MaterialPageRoute(
             builder: (BuildContext ctx) =>
-                new CurrentMood(username: _username, token: _token)));
+                new Home(username: _username, token: _token)));
   }
 
   // TODO send feedback on recommendation
