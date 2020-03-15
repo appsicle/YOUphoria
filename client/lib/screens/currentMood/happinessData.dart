@@ -111,6 +111,8 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                         var response = await postData(
                           "/recommendation/sendUserInterests",
                           {'interests': selectedActivities},
+                          _token
+                  
                         );
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');

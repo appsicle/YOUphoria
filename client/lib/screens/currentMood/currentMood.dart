@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import './newMood.dart';
 import 'package:intl/intl.dart';
-import 'package:client/main.dart';
-import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:client/http.dart';
+
 
 class CurrentMood extends StatelessWidget {
   final String username;
@@ -70,8 +70,8 @@ class _MoodDisplayState extends State<MoodDisplay> {
     var now = new DateTime.now();
     var formattedDate = new DateFormat("yyyy-MM-dd").format(now);
     var dateInformation = {"date": formattedDate};
-    Response response =
-        await postData("profile/login", dateInformation, this.token);
+    var response =
+        await postData("moods/getMoodsForDay", dateInformation, this.token);
     var body = jsonDecode(response.body);
     if (response.statusCode == 200) {
       if (body["calendar"].length > 0) {
