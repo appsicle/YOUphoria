@@ -14,7 +14,7 @@ class CurrentMood extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Text title = Text(username + "'s moods of today.");
+    Text title = Text(username + "'s moods today.");
 
     return Scaffold(
       appBar: AppBar(

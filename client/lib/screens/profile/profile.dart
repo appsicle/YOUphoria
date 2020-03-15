@@ -14,16 +14,15 @@ class Profile extends StatefulWidget {
       : super(key: key);
 
   @override
-  _ProfileState createState() => _ProfileState(token);
+  _ProfileState createState() => _ProfileState(username, token);
 }
 
 class _ProfileState extends State<Profile> {
   String token;
+  String username;
   var preferences = [];
 
-  _ProfileState(token) {
-    this.token = token;
-  }
+  _ProfileState(this.username, this.token);
 
   @override
   void initState() {
@@ -63,17 +62,17 @@ class _ProfileState extends State<Profile> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text('Profile'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Profile"),
+        backgroundColor: Colors.indigoAccent,
       ),
-      child: Center(
+      body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              
               child: Center(
                 child: Text(
                   this.widget.username,
@@ -85,8 +84,7 @@ class _ProfileState extends State<Profile> {
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.all(0.0),
-                children:
-                    List.generate(this.preferences.length, (index) {
+                children: List.generate(this.preferences.length, (index) {
                   return profileData(this.preferences[index]['tag']);
                 }),
               ),
