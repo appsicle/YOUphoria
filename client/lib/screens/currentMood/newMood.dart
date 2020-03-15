@@ -93,7 +93,7 @@ class SliderState extends State<MoodSlider> {
               _updateCurrentLocation(); // update current location
               var now = new DateTime.now();
               String formattedDate = new DateFormat("yyyy-MM-dd").format(now);
-              String formattedTime = new DateFormat("H:m:s").format(now);
+              String formattedTime = new DateFormat("HH:mm:ss").format(now);
               var moodInformation = {
                 "mood": this._currentMood,
                 "date": formattedDate,

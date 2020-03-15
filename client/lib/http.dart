@@ -13,7 +13,7 @@ Future<Response> postData(endpoint, json, token) async {
   return response;
 }
 
-Future<Response> getData(endpoint, json, token) async {
+Future<Response> getData(endpoint, token) async {
   var headers = {"Content-type": "application/json"};
   if (token != null) {
     headers["Authorization"] = "Bearer " + token;

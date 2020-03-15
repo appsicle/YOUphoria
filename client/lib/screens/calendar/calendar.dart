@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:client/http.dart';
+import 'dart:convert';
 
 // Example holidays
 final Map<DateTime, List> _holidays = {
@@ -30,21 +32,23 @@ class Calendar extends StatelessWidget {
         backgroundColor: Colors.indigoAccent,
       ),
       body: Center(
-        child: CalendarPage(username: username),
+        child: CalendarPage(username: username, token: token),
       ),
     );
   }
 }
 
 class CalendarPage extends StatefulWidget {
-  CalendarPage({Key key, this.title, @required this.username})
+  CalendarPage(
+      {Key key, this.title, @required this.username, @required this.token})
       : super(key: key);
 
   final String title;
   final String username;
+  final String token;
 
   @override
-  _CalendarPageState createState() => _CalendarPageState();
+  _CalendarPageState createState() => _CalendarPageState(token);
 }
 
 class _CalendarPageState extends State<CalendarPage>
@@ -53,31 +57,18 @@ class _CalendarPageState extends State<CalendarPage>
   List _selectedMoods;
   AnimationController _animationController;
   CalendarController _calendarController;
+  final String _token;
+
+  _CalendarPageState(this._token);
 
   @override
   void initState() {
     super.initState();
     final _selectedDay = DateTime.now();
 
-    // TODO request moods from server
-    var dataFromServer = {
-      "2020/03/06": ["happy at 12:00pm", "sad at 12:01pm", "happy at 12:02pm"],
-      "2020/03/07": ["terrible at 3:04pm"],
-      "2020/03/10": [
-        "sad at 4:04pm",
-        "amazing at 7:02pm",
-        "okay at 10:00pm",
-        "terrible at 10:00pm",
-        "happy at 10:00pm"
-      ]
-    };
-
     _moodsByDate = {};
 
-    dataFromServer.forEach((k, v) {
-      var date = new DateFormat("yyyy/MM/dd", "en_US").parse(k);
-      _moodsByDate[date] = v;
-    });
+    getCalendarInformation();
 
     _selectedMoods = _moodsByDate[_selectedDay] ?? [];
     _calendarController = CalendarController();
@@ -86,6 +77,30 @@ class _CalendarPageState extends State<CalendarPage>
       duration: const Duration(milliseconds: 400),
     );
     _animationController.forward();
+  }
+
+  void getCalendarInformation() async {
+    var response = await getData("mood/getAllMoods", this._token);
+    var body = jsonDecode(response.body);
+    Map<DateTime, List<String>> dataFromServer = {};
+    if (response.statusCode == 200) {
+      var data = body["calendar"];
+      if (data.length > 0) {
+        for (int i = 0; i < data.length; i++) {
+          DateTime date =
+              new DateFormat("yyyy-MM-dd", "en_US").parse(data[i]["date"]);
+          String mood = data[i]["mood"] + " at " + data[i]["time"];
+          if (dataFromServer[date] == null) {
+            dataFromServer[date] = [mood];
+          } else {
+            dataFromServer[date].add(mood);
+          }
+        }
+        setState(() {
+          _moodsByDate = dataFromServer;
+        });
+      }
+    }
   }
 
   @override
@@ -175,7 +190,7 @@ class SelectedMoodWidget extends StatelessWidget {
       return Colors.cyan[100];
     } else if (this._mood.contains("sad")) {
       return Colors.indigoAccent[100];
-    } else if (this._mood.contains("terrible")) {
+    } else if (this._mood.contains("horrible")) {
       return Colors.deepPurpleAccent[100];
     } else {
       return Colors.white;
