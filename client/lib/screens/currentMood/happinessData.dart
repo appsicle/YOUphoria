@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../home/home.dart';
 import 'package:client/http.dart';
+import 'currentMood.dart';
 
 class HappinessData extends StatelessWidget {
   final String username;
@@ -108,17 +109,16 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                     ? () async {
                         // TODO: send mood data to backend with selected activites
                         var response = await postData(
-                          "recommendation/sendUserInterests",
-                          {'interests': selectedActivities},
-                          _token
-                        );
+                            "recommendation/sendUserInterests",
+                            {'interests': selectedActivities},
+                            _token);
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');
                         }
                         // todo: setState() called after dispose()
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext ctx) => new Home(
+                                builder: (BuildContext ctx) => new CurrentMood(
                                     username: _username, token: _token)));
                       }
                     : null,
