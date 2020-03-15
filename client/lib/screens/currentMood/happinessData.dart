@@ -112,7 +112,7 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 disabledColor: Colors.grey[300],
                 onPressed: selectedActivities.length > 0
                     ? () async {
-                        print(selectedActivities);
+                        // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
                             "recommendation/sendUserInterests",
                             {'interests': selectedActivities},
