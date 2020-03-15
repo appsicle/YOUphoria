@@ -19,7 +19,7 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   String token;
-  var preferences;
+  var preferences = [];
 
   _ProfileState(token) {
     this.token = token;
