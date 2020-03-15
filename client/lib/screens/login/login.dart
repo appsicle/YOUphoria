@@ -62,7 +62,7 @@ class Login extends StatelessWidget {
       String password = passwordTextController.text.trim();
 
       var loginInformation = {"username": username, "password": password};
-      var response = await postData("profile/login", loginInformation);
+      var response = await postData("profile/login", loginInformation, null);
       var body = decodeBody(response.body);
 
       // SUCCESS -> redirect to homepage
@@ -71,6 +71,8 @@ class Login extends StatelessWidget {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('username', username);
         prefs.setString('token', token);
+        print("login");
+        print(token);
 
         Navigator.push(
             context,
@@ -126,7 +128,8 @@ class Login extends StatelessWidget {
         "username": username,
         "password": password
       };
-      var response = await postData("profile/create", createAccountInformation);
+      var response =
+          await postData("profile/create", createAccountInformation, null);
       var body = decodeBody(response.body);
 
       // SUCCESS -> redirect to create account page (to send interests)
