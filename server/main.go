@@ -1,9 +1,6 @@
 package main
 
 import (
-	Routes "./routes"
-	Mongodb "./mongodb"
-	Logging "./logging"
 	log "github.com/sirupsen/logrus"
 
 	"net/http"
@@ -11,12 +8,12 @@ import (
 )
 
 func main() {
-	Logging.InitLogging();
+	InitLogging();
 	log.Info("Application started")
 
-	Mongodb.ConnectDB();
+	ConnectDB();
 	r := mux.NewRouter()
-	Routes.ConnectRoutes(r);
+	ConnectRoutes(r);
 	
 	http.ListenAndServe(":8080", r)
 }
