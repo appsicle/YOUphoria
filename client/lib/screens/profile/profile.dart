@@ -38,9 +38,7 @@ class _ProfileState extends State<Profile> {
       return;
     }
     setState(() {
-      print(decodeBody(response.body));
       this.preferences = decodeBody(response.body)['preferences'];
-      print(this.preferences);
     });
   }
 

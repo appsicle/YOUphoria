@@ -99,7 +99,6 @@ class SliderState extends State<MoodSlider> {
             borderRadius: BorderRadius.circular(15.0),
             onPressed: () async {
               _updateCurrentLocation(); // update current location
-              print(_currentPosition);
               var now = new DateTime.now();
               String formattedDate = new DateFormat("yyyy-MM-dd").format(now);
               String formattedTime = new DateFormat("HH:mm:ss").format(now);
@@ -124,7 +123,6 @@ class SliderState extends State<MoodSlider> {
                 setState(() {
                   event = body;
                 });
-                print(body);
                 _goToRecommendationPopup();
               }
             },

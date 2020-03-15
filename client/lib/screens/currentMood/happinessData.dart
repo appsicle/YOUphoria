@@ -93,8 +93,6 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                             selectedActivities.add(act);
                           }
                         });
-                      } else {
-                        print('did not mount');
                       }
                     }),
                   );
