@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../home/home.dart';
-import '../currentMood/happinessData.dart';
-import 'package:client/http.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+import 'package:intl/intl.dart';
 
 class CreateAccount extends StatefulWidget {
   final String username;
@@ -18,93 +17,113 @@ class CreateAccount extends StatefulWidget {
 class _CreateAccountState extends State<CreateAccount> {
   final String _username;
   final String _token;
+  final format = DateFormat("yyyy-MM-dd");
+  String _date;
+  String _gender = "male";
 
   _CreateAccountState(this._username, this._token);
 
-  List<String> _selectedActivities = [];
-  final List<String> _possibleActivities =
-      HappinessData.getPossibleActivities();
-
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[200],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            padding: EdgeInsets.only(top: 60.0, left: 20, right: 20),
-            alignment: Alignment.bottomCenter,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Select some of your interests/hobbbies!',
-                    style: TextStyle(fontSize: 20),
+    return Material(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(25.0, 15.0, 20.0, 15.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Container(),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Gender:  ",
+                  style: TextStyle(
+                    fontSize: 25,
                   ),
-                ],
-              ),
+                ),
+                Container(
+                  child: DropdownButton<String>(
+                      items: [
+                        DropdownMenuItem<String>(
+                          value: "male",
+                          child: Text("male"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "female",
+                          child: Text("female"),
+                        ),
+                        DropdownMenuItem<String>(
+                          value: "other",
+                          child: Text("other"),
+                        ),
+                      ],
+                      value: _gender,
+                      onChanged: (newValue) {
+                        setState(() {
+                          _gender = newValue;
+                        });
+                      }),
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            flex: 9,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 25.0),
-              child: GridView.count(
-                crossAxisCount: 4,
-                mainAxisSpacing: 10.0,
-                crossAxisSpacing: 10.0,
-                children: List.generate(_possibleActivities.length, (index) {
-                  return Container(
-                    height: 20,
-                    width: 30,
-                    child: ActivityButton(_possibleActivities[index], () {
-                      setState(() {
-                        String act = HappinessData.getActivityKey(
-                            _possibleActivities[index]);
-                        if (_selectedActivities.contains(act)) {
-                          _selectedActivities.remove(act);
-                        } else {
-                          _selectedActivities.add(act);
-                        }
-                      });
-                    }),
-                  );
-                }),
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  "Birthday:  ",
+                  style: TextStyle(
+                    fontSize: 25,
+                  ),
+                ),
+                MaterialButton(
+                  child: Text(
+                    "$_date",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                  padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                  ),
+                  elevation: 10.0,
+                  color: Colors.indigo,
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (BuildContext builder) {
+                        return Container(
+                          height:
+                              MediaQuery.of(context).copyWith().size.height / 3,
+                          child: CupertinoDatePicker(
+                            initialDateTime: DateTime.now(),
+                            onDateTimeChanged: (DateTime date) {
+                              setState(() {
+                                _date = DateFormat("yyyy-MM-dd").format(date);
+                                print(_date);
+                              });
+                            },
+                            maximumDate: DateTime.now(),
+                            minimumYear: 1950,
+                            maximumYear: 2020,
+                            mode: CupertinoDatePickerMode.date,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              alignment: Alignment.topCenter,
-              child: CupertinoButton(
-                color: Colors.blueGrey,
-                disabledColor: Colors.grey[300],
-                onPressed: _selectedActivities.length > 0
-                    ? () async {
-                        // TODO USE NEW SEND FEEDBACK ENDPOINT
-                        var response = await postData(
-                            "recommendation/sendUserInterests",
-                            {'interests': _selectedActivities},
-                            _token);
-                        if (response.statusCode != 200) {
-                          print('failed to send user interests.');
-                        }
-
-                        Navigator.of(context, rootNavigator: true)
-                            .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext ctx) => new Home(
-                                    username: this._username,
-                                    token: this._token)));
-                      }
-                    : null,
-                child: Text('Confirm Selection'),
-              ),
+            Expanded(
+              child: Container(),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
