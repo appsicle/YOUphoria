@@ -57,6 +57,8 @@ class SliderState extends State<MoodSlider> {
   Position _currentPosition;
   String _currentMood =
       "okay"; // todo eventually will be used when sending data to backend
+  var event = {};
+
 
   SliderState(this._username, this._token);
 
@@ -103,6 +105,19 @@ class SliderState extends State<MoodSlider> {
               if (_moodValue >= _threshold) {
                 _goToHappinessDataScreen();
               } else {
+                var json = {
+                  'username': this.widget._username,
+                  'token': this._token,
+                  'latitude': _currentPosition.latitude,
+                  'longitude': _currentPosition.longitude
+                };
+                var response = await postData(
+                    'recommendation/getRecommendation', json, this._token);
+                var body = decodeBody(response.body);
+                setState(() {
+                  event = body;
+                });
+                print(body);
                 _goToRecommendationPopup();
               }
             },
@@ -150,7 +165,7 @@ class SliderState extends State<MoodSlider> {
 
     int recommendationId = 123; // temp
     String recommendation =
-        "temporary recommendation this text area is scrollable btw when it overflows"; // temp
+        event['description']; // temp
 
     await showDialog(
         context: context,
@@ -160,7 +175,7 @@ class SliderState extends State<MoodSlider> {
             title: Container(
               padding: EdgeInsets.all(10.0),
               child: Text(
-                  "We see that you're not feeling too great, here's a recommendation!"),
+                  event['name']),
             ),
             content: Container(
               height: 200,
@@ -231,6 +246,7 @@ class SliderState extends State<MoodSlider> {
   // TODO send feedback on recommendation
   // rating should only be 0 (bad) or 1 (good)
   void rateRecommendation(int recommendationId, int rating) {
+    // postData(endpoint, json, _token)
     print("recommendation with ID: " +
         recommendationId.toString() +
         " rated: " +

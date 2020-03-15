@@ -114,8 +114,8 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                     ? () async {
                         // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
-                            "recommendation/sendUserInterests",
-                            {'interests': selectedActivities},
+                            "recommendation/sendFeedback",
+                            {'tags': selectedActivities, 'liked':1},
                             _token);
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');

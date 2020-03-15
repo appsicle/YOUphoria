@@ -86,8 +86,8 @@ class _UserInterestsState extends State<UserInterests> {
                     ? () async {
                         // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
-                            "recommendation/sendUserInterests",
-                            {'interests': _selectedActivities},
+                            "recommendation/sendFeedback",
+                            {'tags': _selectedActivities, 'liked':1},
                             _token);
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');
