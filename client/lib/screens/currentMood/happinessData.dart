@@ -13,7 +13,7 @@ class HappinessData extends StatelessWidget {
   static final Map<String, String> possibleActivities = {
     "Music": "music",
     "Visual Arts": "visual-arts",
-    "Performing Arts": "performed-arts",
+    "Performing Arts": "performing-arts",
     "Film": "film",
     "Lectures & Books": "lectures-books",
     "Fashion": "fashion",
