@@ -214,8 +214,8 @@ func GetUserInterestsEndpoint(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(preferences)
 }
 
-// AddRecommendationFeedbackEndpoint is...
-func AddRecommendationFeedbackEndpoint(res http.ResponseWriter, req *http.Request) {
+// SendFeedbackEndpoint is...
+func SendFeedbackEndpoint(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("content-type", "application/json")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
@@ -226,8 +226,7 @@ func AddRecommendationFeedbackEndpoint(res http.ResponseWriter, req *http.Reques
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.WithFields(log.Fields{"req body": reqMap,}).Info("AddRecommendationFeedbackEndpoint: incoming request")
-
+	log.WithFields(log.Fields{"req body": reqMap,}).Info("SendFeedbackEndpoint: incoming request")
 
 	// get preferences
 	preferences := Preferences{}
@@ -236,28 +235,68 @@ func AddRecommendationFeedbackEndpoint(res http.ResponseWriter, req *http.Reques
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
-	}
+	}	
 
-	// filter for pref 
-	preference := Preference{}
-	for _, pref := range preferences.Preferences {
-		if pref.Tag == reqMap["tag"] {
-			preference = pref
+	// insert tag if not in personal preference
+	found := false
+	for _, tag := range reqMap["tags"].([]interface{}){
+		found = false
+		for _, pref := range preferences.Preferences {
+			if pref.Tag == tag.(string) {
+				found = true
+				break
+			}
 		}
-	}
+		
+		if !found {
+			// add preference
+			p := Preference{tag.(string), "10"}
+			filter := bson.M{ "id" : StoOI(reqMap["id"].(string))}
+			update := bson.M{ "$push" : bson.M{"preferences": p}}
+			if _, err := ProfileCollection.UpdateOne(ctx, filter, update); err != nil{
+				res.WriteHeader(http.StatusInternalServerError)
+				res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+				return
+			}
+			preferences.Preferences = append(preferences.Preferences, p)
+		}
+	}	
 
-	// update preference
-	newWeight := strconv.Itoa(atoi(preference.Weight) + adjustment(atoi(reqMap["liked"].(string))))
-	filter = bson.M{ "id" : StoOI(reqMap["id"].(string)),
-					  "preferences.tag" : reqMap["tag"].(string)}
-	update := bson.M{ "$set": bson.M{ "preferences.$.weight" : newWeight}}
+	// // filter for prefs 
+	// preferences := Preferences{}
+	// n := 0
+	// for _, pref := range preferences_pre.Preferences {
+	// 	if pref.Tag == reqMap["tag"] {
+	// 		preferences.Preferences = append(preferences.Preferences, pref)
+	// 		n++
+	// 	}
+	// }
+	// preferences.Preferences = preferences.Preferences[:n]	
+
+	// update personal preferences weight
+	for _, tag := range reqMap["tags"].([]interface{}){
+		for i, pref := range preferences.Preferences {
+			if pref.Tag == tag.(string) {
+				preferences.Preferences[i].Weight = strconv.Itoa(atoi(pref.Weight) + adjustment(atoi(reqMap["liked"].(string))))
+				break
+			}
+		}
+	}	
+
+	// // TODO update CF weights
+
+
+
+	// update preferences
+	filter = bson.M{ "id" : StoOI(reqMap["id"].(string))}
+	update := bson.M{ "$set": bson.M{ "preferences" : preferences.Preferences}}
 	if _, err := ProfileCollection.UpdateOne(ctx, filter, update); err != nil{
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
 	}
 	
-	log.WithFields(log.Fields{}).Info("AddRecommendationFeedbackEndpoint: outgoing result")
+	log.WithFields(log.Fields{}).Info("SendFeedbackEndpoint: outgoing result")
 }
 
 func adjustment(selector int) (int){
