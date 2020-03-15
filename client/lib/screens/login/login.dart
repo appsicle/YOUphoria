@@ -128,6 +128,8 @@ class Login extends StatelessWidget {
       };
       var response =
           await postData("profile/create", createAccountInformation, null);
+          print('made it.');
+        print(response.body);
       var body = decodeBody(response.body);
 
       // SUCCESS -> redirect to create account page (to send interests)

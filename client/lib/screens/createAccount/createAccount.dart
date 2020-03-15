@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../home/home.dart';
 import '../currentMood/happinessData.dart';
+import 'package:client/http.dart';
 
 class CreateAccount extends StatefulWidget {
   final String username;
@@ -79,8 +80,17 @@ class _CreateAccountState extends State<CreateAccount> {
                 color: Colors.blueGrey,
                 disabledColor: Colors.grey[300],
                 onPressed: _selectedActivities.length > 0
-                    ? () {
+                    ? () async {
                         // TODO: send mood data to backend with selected activites
+                        var response = await postData(
+                          "recommendation/sendUserInterests",
+                          {'interests': _selectedActivities},
+                          _token
+                        );
+                        if (response.statusCode != 200) {
+                          print('failed to send user interests.');
+                        }
+
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
                                 builder: (BuildContext ctx) => new Home(

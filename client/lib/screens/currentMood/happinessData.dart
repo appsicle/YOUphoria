@@ -107,20 +107,19 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 onPressed: selectedActivities.length > 0
                     ? () async {
                         // TODO: send mood data to backend with selected activites
-                        // await post()
                         var response = await postData(
-                          "/recommendation/sendUserInterests",
+                          "recommendation/sendUserInterests",
                           {'interests': selectedActivities},
                           _token
-                  
                         );
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');
                         }
-                        // Navigator.of(context, rootNavigator: true)
-                        //     .pushReplacement(MaterialPageRoute(
-                        //         builder: (BuildContext ctx) => new Home(
-                        //             username: _username, token: _token)));
+                        // todo: setState() called after dispose()
+                        Navigator.of(context, rootNavigator: true)
+                            .pushReplacement(MaterialPageRoute(
+                                builder: (BuildContext ctx) => new Home(
+                                    username: _username, token: _token)));
                       }
                     : null,
                 child: Text('Confirm Selection'),
