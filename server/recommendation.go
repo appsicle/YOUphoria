@@ -390,17 +390,6 @@ func SendFeedbackEndpoint(res http.ResponseWriter, req *http.Request) {
 		}
 	}	
 
-	// // filter for prefs 
-	// preferences := Preferences{}
-	// n := 0
-	// for _, pref := range preferences_pre.Preferences {
-	// 	if pref.Tag == reqMap["tag"] {
-	// 		preferences.Preferences = append(preferences.Preferences, pref)
-	// 		n++
-	// 	}
-	// }
-	// preferences.Preferences = preferences.Preferences[:n]	
-
 	// update personal preferences weight
 	for _, tag := range reqMap["tags"].([]interface{}){
 		for i, pref := range preferences.Preferences {
@@ -411,10 +400,6 @@ func SendFeedbackEndpoint(res http.ResponseWriter, req *http.Request) {
 		}
 	}	
 
-	// // TODO update CF weights
-
-
-
 	// update preferences
 	filter = bson.M{ "id" : StoOI(reqMap["id"].(string))}
 	update := bson.M{ "$set": bson.M{ "preferences" : preferences.Preferences}}
@@ -422,6 +407,59 @@ func SendFeedbackEndpoint(res http.ResponseWriter, req *http.Request) {
 		res.WriteHeader(http.StatusInternalServerError)
 		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
 		return
+	}
+
+	// get profile
+	profile := Profile{}
+	filter = bson.M{"id": StoOI(reqMap["id"].(string))}
+	if err := ProfileCollection.FindOne(ctx, filter).Decode(&profile); err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}	
+
+	// update CF categories weights
+	for _, tag := range reqMap["tags"].([]interface{}) {
+
+		// get categories
+		categoryDoc := CategoryDoc{}
+		filter = bson.M{"category": tag.(string)}
+		if err := CategoryCollection.FindOne(ctx, filter).Decode(&categoryDoc); err != nil {
+			res.WriteHeader(http.StatusInternalServerError)
+			res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+			return
+		}
+
+		// modify categories weights
+		for i, g := range categoryDoc.Genders{
+			if g.Gender == profile.Gender{
+				categoryDoc.Genders[i].Weight = strconv.Itoa(atoi(g.Weight) + adjustment(atoi(reqMap["liked"].(string))))
+				break
+			}
+		}
+		for i, a := range categoryDoc.AgeRanges{
+			if a.Range == ageGroup(profile.Age){
+				categoryDoc.AgeRanges[i].Weight = strconv.Itoa(atoi(a.Weight) + adjustment(atoi(reqMap["liked"].(string))))
+				break
+			}
+		}
+		for i, z := range categoryDoc.ZipCodes{
+			if z.ZipCode == zipCodeGroup(profile.ZipCode){
+				categoryDoc.ZipCodes[i].Weight = strconv.Itoa(atoi(z.Weight) + adjustment(atoi(reqMap["liked"].(string))))
+				break
+			}
+		}
+
+		// update categories
+		filter = bson.M{"category": tag.(string)}
+		update := bson.M{ "$set": bson.M{ "genders" : categoryDoc.Genders, 
+											"ageranges" : categoryDoc.AgeRanges, 
+											"zipcodes" : categoryDoc.ZipCodes }}
+		if _, err := CategoryCollection.UpdateOne(ctx, filter, update); err != nil{
+			res.WriteHeader(http.StatusInternalServerError)
+			res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+			return
+		}
 	}
 	
 	log.WithFields(log.Fields{}).Info("SendFeedbackEndpoint: outgoing result")
@@ -442,77 +480,25 @@ func atoi(s string)(int){
 	return i
 }
 
-var categories  = [30]string{"music", "visual-arts", "performing-arts", "film",
-"lectures-books", "fashion", "food-and-drink", "festivals-fairs", "charities", "sports-active-life", "nightlife", "kids-family"}
-
-func convert(age int) string {
-	if age >= 0 && age <= 19 {
-		return "0"
-	}
-	if age >= 20 && age <= 29 {
-		return "1"
-	}
-	if age >= 30 && age <= 39 {
-		return "2"
-	}
-	if age >= 40 && age <= 59 {
-		return "3"
-	} else {
-		return "4"
-	}
-}
-
 func ageGroup(s string) (string){
 	i := atoi(s)
-	if i < 18{
-		return "0"
-	}
-	if i < 30{
-		return "1"
-	}
-	if i < 50{
-		return "2"
-	}
-	if i < 70{
-		return "3"
-	}
+	if i < 18 { return "0" }
+	if i < 30 { return "1" }
+	if i < 50 { return "2" }
+	if i < 70 {	return "3" }
 	return "4"
 }
 
 func zipCodeGroup(s string) (string){
 	i := atoi(s)
-	if i < 10000{
-		return "0"
-	}
-	if i < 20000{
-		return "1"
-	}
-	if i < 30000{
-		return "2"
-	}
-	if i < 40000{
-		return "3"
-	}
-	if i < 50000{
-		return "4"
-	}
-	if i < 60000{
-		return "5"
-	}
-	if i < 70000{
-		return "6"
-	}
-	if i < 80000{
-		return "7"
-	}
-	if i < 90000{
-		return "8"
-	}
+	if i < 10000 { return "0" }
+	if i < 20000 { return "1" }
+	if i < 30000 { return "2" }
+	if i < 40000 { return "3" }
+	if i < 50000 { return "4" }
+	if i < 60000 { return "5" }
+	if i < 70000 { return "6" }
+	if i < 80000 { return "7" }
+	if i < 90000 { return "8" }
 	return "9"
 }
-
-// {..., age: "0", zipcode: "23132", gender: "male"}
-// get birthday
-// calculate age (just year) now
-// use map to convert to range code
-
