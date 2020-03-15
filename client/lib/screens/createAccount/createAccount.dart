@@ -35,14 +35,17 @@ class _CreateAccountState extends State<CreateAccount> {
           Container(
             padding: EdgeInsets.only(top: 60.0, left: 20, right: 20),
             alignment: Alignment.bottomCenter,
-             child: Center(
-               child: Row(
-                 mainAxisAlignment: MainAxisAlignment.center,
-                 children: <Widget>[
-                   Text('Select some of your interests/hobbbies!', style: TextStyle(fontSize: 20),),
-                 ],
-               ),
-             ),
+            child: Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Select some of your interests/hobbbies!',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ],
+              ),
+            ),
           ),
           Expanded(
             flex: 9,
@@ -58,13 +61,13 @@ class _CreateAccountState extends State<CreateAccount> {
                     width: 30,
                     child: ActivityButton(_possibleActivities[index], () {
                       setState(() {
-                        String act = _possibleActivities[index];
+                        String act = HappinessData.getActivityKey(
+                            _possibleActivities[index]);
                         if (_selectedActivities.contains(act)) {
                           _selectedActivities.remove(act);
                         } else {
                           _selectedActivities.add(act);
                         }
-                        print(_selectedActivities);
                       });
                     }),
                   );
@@ -81,12 +84,10 @@ class _CreateAccountState extends State<CreateAccount> {
                 disabledColor: Colors.grey[300],
                 onPressed: _selectedActivities.length > 0
                     ? () async {
-                        // TODO: send mood data to backend with selected activites
                         var response = await postData(
-                          "recommendation/sendUserInterests",
-                          {'interests': _selectedActivities},
-                          _token
-                        );
+                            "recommendation/sendUserInterests",
+                            {'interests': _selectedActivities},
+                            _token);
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');
                         }

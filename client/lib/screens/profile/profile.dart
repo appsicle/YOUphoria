@@ -73,6 +73,7 @@ class _ProfileState extends State<Profile> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
+              
               child: Center(
                 child: Text(
                   this.widget.username,
@@ -85,8 +86,8 @@ class _ProfileState extends State<Profile> {
               child: ListView(
                 padding: const EdgeInsets.all(0.0),
                 children:
-                    List.generate(max(this.preferences.length, 20), (index) {
-                  return profileData(this.preferences[1]['tag']);
+                    List.generate(this.preferences.length, (index) {
+                  return profileData(this.preferences[index]['tag']);
                 }),
               ),
             ),
