@@ -234,6 +234,8 @@ class SliderState extends State<MoodSlider> {
       });
     }).catchError((e) {
       print(e);
+      // Navigator.of(context).pop();
+      
     });
   }
 }

@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../createAccount/createAccount.dart';
 import '../home/home.dart';
-import 'package:http/http.dart';
-import 'dart:convert';
-import 'package:client/main.dart';
+import 'package:client/http.dart';
 
 class Login extends StatelessWidget {
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
@@ -64,9 +62,8 @@ class Login extends StatelessWidget {
       String password = passwordTextController.text.trim();
 
       var loginInformation = {"username": username, "password": password};
-      Response response =
-          await postData("profile/login", loginInformation, Null);
-      var body = jsonDecode(response.body);
+      var response = await postData("profile/login", loginInformation);
+      var body = decodeBody(response.body);
 
       // SUCCESS -> redirect to homepage
       if (response.statusCode == 200) {
@@ -129,9 +126,8 @@ class Login extends StatelessWidget {
         "username": username,
         "password": password
       };
-      Response response =
-          await postData("profile/create", createAccountInformation, null);
-      var body = jsonDecode(response.body);
+      var response = await postData("profile/create", createAccountInformation);
+      var body = decodeBody(response.body);
 
       // SUCCESS -> redirect to create account page (to send interests)
       if (response.statusCode == 200) {

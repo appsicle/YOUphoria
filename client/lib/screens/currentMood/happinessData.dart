@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import '../home/home.dart';
+import 'package:client/http.dart';
 
 class HappinessData extends StatelessWidget {
   final String username;
@@ -47,7 +48,7 @@ class EnterMoodData extends StatefulWidget {
 }
 
 class _EnterMoodDataState extends State<EnterMoodData> {
-  List<String> _selectedActivities = [];
+  List<String> selectedActivities = [];
   final List<String> _possibleActivities =
       HappinessData.getPossibleActivities();
   final String _username;
@@ -77,15 +78,19 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                     height: 20,
                     width: 30,
                     child: ActivityButton(_possibleActivities[index], () {
-                      setState(() {
-                        String act = _possibleActivities[index];
-                        if (_selectedActivities.contains(act)) {
-                          _selectedActivities.remove(act);
-                        } else {
-                          _selectedActivities.add(act);
-                        }
-                        print(_selectedActivities);
-                      });
+                      if (mounted) {
+                        setState(() {
+                          String act = _possibleActivities[index];
+                          if (selectedActivities.contains(act)) {
+                            selectedActivities.remove(act);
+                          } else {
+                            selectedActivities.add(act);
+                          }
+                          print(selectedActivities);
+                        });
+                      } else {
+                        print('did not mount');
+                      }
                     }),
                   );
                 }),
@@ -99,13 +104,21 @@ class _EnterMoodDataState extends State<EnterMoodData> {
               child: CupertinoButton(
                 color: Colors.blueGrey,
                 disabledColor: Colors.grey[300],
-                onPressed: _selectedActivities.length > 0
-                    ? () {
+                onPressed: selectedActivities.length > 0
+                    ? () async {
                         // TODO: send mood data to backend with selected activites
-                        Navigator.of(context, rootNavigator: true)
-                            .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext ctx) => new Home(
-                                    username: _username, token: _token)));
+                        // await post()
+                        var response = await postData(
+                          "/recommendation/sendUserInterests",
+                          {'interests': selectedActivities},
+                        );
+                        if (response.statusCode != 200) {
+                          print('failed to send user interests.');
+                        }
+                        // Navigator.of(context, rootNavigator: true)
+                        //     .pushReplacement(MaterialPageRoute(
+                        //         builder: (BuildContext ctx) => new Home(
+                        //             username: _username, token: _token)));
                       }
                     : null,
                 child: Text('Confirm Selection'),
@@ -139,9 +152,11 @@ class _ActivityButtonState extends State<ActivityButton> {
       color: this._isSelected ? Colors.greenAccent : Colors.grey[50],
       onPressed: () {
         widget.onPressed();
-        setState(() {
-          this._isSelected = !this._isSelected;
-        });
+        if (mounted) {
+          setState(() {
+            this._isSelected = !this._isSelected;
+          });
+        }
       },
       child: Center(
         child: Text(
