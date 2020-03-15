@@ -11,21 +11,27 @@ class HappinessData extends StatelessWidget {
       : super(key: key);
 
   // TODO edit this list to be the categories that Harrison is providing us
-  static final List<String> possibleActivities = [
-    "Exercising",
-    "Partying",
-    "Playing Sports",
-    "Playing Video Games",
-    "Cooking",
-    "Watching Movies",
-    "Shopping",
-    "Spending Time with Family",
-    "Hiking",
-    "Working"
-  ];
+  static final Map<String, String> possibleActivities = {
+    "Music": "music",
+    "Visual Arts": "visual-arts",
+    "Performing Arts": "performed-arts",
+    "Film": "film",
+    "Lectures & Books": "lectures-books",
+    "Fashion": "fashion",
+    "Food & Drink": "food-and-drink",
+    "Festivals & Fairs": "festival-fairs",
+    "Charities": "charities",
+    "Sports & Active Life": "sports-active-life",
+    "Nightlife": "nightlife",
+    "Kids & Family": "kids-family"
+  };
 
   static List<String> getPossibleActivities() {
-    return possibleActivities;
+    return possibleActivities.keys.toList();
+  }
+
+  static String getActivityKey(String activity) {
+    return possibleActivities[activity];
   }
 
   @override
@@ -80,13 +86,13 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                     child: ActivityButton(_possibleActivities[index], () {
                       if (mounted) {
                         setState(() {
-                          String act = _possibleActivities[index];
+                          String act = HappinessData.getActivityKey(
+                              _possibleActivities[index]);
                           if (selectedActivities.contains(act)) {
                             selectedActivities.remove(act);
                           } else {
                             selectedActivities.add(act);
                           }
-                          print(selectedActivities);
                         });
                       } else {
                         print('did not mount');
@@ -106,7 +112,7 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 disabledColor: Colors.grey[300],
                 onPressed: selectedActivities.length > 0
                     ? () async {
-                        // TODO: send mood data to backend with selected activites
+                        // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
                             "recommendation/sendUserInterests",
                             {'interests': selectedActivities},

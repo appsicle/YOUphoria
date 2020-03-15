@@ -14,10 +14,13 @@ class CurrentMood extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Text title = Text(username + "'s moods today.");
+
     return Scaffold(
-      // navigationBar: CupertinoNavigationBar(
-      //   middle: Text('Your mood of the day.'),
-      // ),
+      appBar: AppBar(
+        title: title,
+        backgroundColor: Colors.indigoAccent,
+      ),
       body: Center(
         child: AddMood(username: username, token: token),
       ),
