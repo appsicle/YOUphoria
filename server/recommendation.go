@@ -17,24 +17,159 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// Preferences is...
-type Preferences struct {
-	Preferences []Preference	`json:"preferences"`
-}
-
 // Preference is...
 type Preference struct {
 	Tag		string	`json:"tag"`
 	Weight	string	`json:"weight"`
 }
 
+// Preferences is...
+type Preferences struct {
+	Preferences []Preference	`json:"preferences"`
+}
+
+// ZipCode is...
+type ZipCode struct {
+	Zip		string 	`json:"zipcode"`
+	Weight	string 	`json:"weight"`
+}
+
+// ZipCodes is...
+type ZipCodes struct {
+	Zips []ZipCode	`json:"zipcodes"`
+}
+
+// Gender is...
+type Gender struct {
+	Gender 	string 	`json:"gender"`
+	Weight	string 	`json:"weight"`
+}
+
+// Genders is...
+type Genders struct {
+	Genders []Gender `json:"genders"`
+}
+
+// AgeRange is...
+type AgeRange struct {
+	Range 	string 	`json:"range"`	// 1, 2, 3, 4, 5, 6, 7, ...
+	Weight 	string 	`json:"weight"`
+}
+
+// AgeRanges is...
+type AgeRanges struct {
+	AgeRanges []AgeRange	`json:"ageranges"`
+}
+
+// CategoryDoc is...
+type CategoryDoc struct {
+	Category	string 		`json:"category"`
+	ZipCodes 	[]ZipCode	`json:"zipcodes"`
+	Genders		[]Gender	`json:"genders"`
+	AgeRanges	[]AgeRange	`json:"ageranges"`
+}
+
 func (p Preference) String() string {
     return fmt.Sprintf(`'Tag': '%s', 'Weight': '%s'`, p.Tag, p.Weight)
 }
 
-func getYelpResults(yelpreq *YelpReq) (interface{}, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+func cfGetGenderWeight(tag string, gender string, ctx *context.Context) (int, error) {
+	log.Info("Entering cfGetGenderWeight...", tag, gender)
+	var categoryDoc CategoryDoc
+	var result int = 0
+	if err := CategoryCollection.FindOne(*ctx, bson.M{"category": tag}).Decode(&categoryDoc); err != nil {
+		log.Info("Exiting cfGetGenderWeight with error...")
+		return 0, err
+	}
+	for _, sGender := range categoryDoc.Genders {
+		if sGender.Gender == gender {
+			result, _ = strconv.Atoi(sGender.Weight)
+		}	
+	}
+	log.Info("Exiting cfGetGenderWeight...")
+	return result, nil
+}
+
+func cfGetAgeRangeWeight(tag string, agerange string, ctx *context.Context) (int, error) {
+	log.Info("Entering cfGetAgeRangeWeight...")
+	var categoryDoc CategoryDoc
+	var result int = 0
+	if err := CategoryCollection.FindOne(*ctx, bson.M{"category": tag}).Decode(&categoryDoc); err != nil {
+		log.Info("Exiting cfGetAgeRangeWeight with error...")
+		return 0, err
+	}
+	for _, sAge := range categoryDoc.AgeRanges {
+		if sAge.Range == ageGroup(agerange) {
+			result, _ = strconv.Atoi(sAge.Weight)
+		}	
+	}
+	log.Info("Exiting cfGetAgeRangeWeight...")
+	return result, nil
+}
+
+func cfGetZipcodeRangeWeight(tag string, zipcode string, ctx *context.Context) (int, error) {
+	log.Info("Entering ZipcodeRangeWeight...")
+	var categoryDoc CategoryDoc
+	var result int = 0
+	if err := CategoryCollection.FindOne(*ctx, bson.M{"category": tag}).Decode(&categoryDoc); err != nil {
+		log.Info("Exiting cfGetZipcodeRangeWeight with error...")
+		return 0, err
+	}
+	for _, sZip := range categoryDoc.ZipCodes {
+		if sZip.Zip == zipCodeGroup(zipcode) {
+			result, _ = strconv.Atoi(sZip.Weight)
+		}	
+	}
+	log.Info("Exiting ZipcodeRangeWeight...")
+	return result, nil
+}
+
+func getTopCategory(profile *SafeProfile, ctx *context.Context) (string, error) {
+	log.Info("Entering getTopCategory...", *profile)
+	var tag string
+	wmax := math.SmallestNonzeroFloat64
+	for _, pref := range profile.Preferences {
+		weight, _ := strconv.Atoi(pref.Weight)
+
+		gWeight, wErr := cfGetGenderWeight(pref.Tag, profile.Gender, ctx)
+		if wErr != nil { return "", wErr }
+		arWeight, arErr := cfGetAgeRangeWeight(pref.Tag, profile.Age, ctx)
+		if arErr != nil { return "", arErr}
+		zWeight, zErr := cfGetZipcodeRangeWeight(pref.Tag, profile.ZipCode, ctx)
+		if zErr != nil { return "", zErr}
+		
+		total := float64(weight) + (float64(gWeight) * 0.9) + (float64(arWeight) * 0.5) + (float64(zWeight) * 0.6)
+		fmt.Println(total, " ", )
+		if total > wmax {
+			wmax = total
+			tag = pref.Tag
+		}
+	}
+
+	log.Info("Exiting getTopCategory...")
+	return tag, nil
+}
+
+func buildYelpReq(profile SafeProfile, reqMap map[string]interface{}, ctx *context.Context) (YelpReq, error) {
+	var yr YelpReq
+
+	category, err := getTopCategory(&profile, ctx)
+	if err != nil {
+		return yr, err
+	}
+	yr.Categories = category
+	yr.Latitude = fmt.Sprintf("%v", reqMap["latitude"])
+	yr.Longitude = fmt.Sprintf("%v", reqMap["longitude"])
+	yr.Radius = 40000
+	yr.Limit = 1
+	yr.StartDate = int32(time.Now().Unix())
+
+	return yr, nil
+}
+
+func getYelpResults(yelpreq *YelpReq, ctx *context.Context) (interface{}, error) {
+	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// defer cancel()
 
 	reqMap := make(map[string]interface{})
 	j, _ := json.Marshal(yelpreq); json.Unmarshal(j, &reqMap)	// struct -> json -> map
@@ -45,7 +180,7 @@ func getYelpResults(yelpreq *YelpReq) (interface{}, error) {
 		queryTerms.Add(key, fmt.Sprintf("%v", val))
 	}
 	query := QueryStem + queryTerms.Encode()
-	yelpReq, err := http.NewRequestWithContext(ctx, "GET", query, nil)
+	yelpReq, err := http.NewRequestWithContext(*ctx, "GET", query, nil)
 	if err != nil { return nil, err }
 
 	yelpReq.Header.Set("content-type", "application/json")
@@ -62,56 +197,7 @@ func getYelpResults(yelpreq *YelpReq) (interface{}, error) {
 	return resMap["events"].([]interface{})[0], nil
 }
 
-
-// func processUserInfo(profile SafeProfile) YelpReq {
-// 	wmax := math.MinInt32
-// 	var tag string
-// 	for preference := range profile.Preferences {
-// 		if preference.Weight > wmax {
-// 			wmax = preference.Weight
-// 			tag = preference.Tag
-// 		}
-// 	}
-
-// 	var yelpReq YelpReq
-// 	yelpReq.Term = tag
-// 	yelpReq.Location = 
-
-// 	return yelpReq
-// }
-
-// func getProfileFromToken(reqMap map[string]interface{}, ctx Context) (SafeProfile, error) {
-// 	id, _ := primitive.ObjectIDFromHex(reqMap["id"].(string))
-// 	var profile SafeProfile
-// 	if err := Mongodb.ProfileCollection.FindOne(ctx, bson.M{"id":id}).Decode(&profile); err != nil {
-// 		return profile, err
-// 	}
-// 	return profile, nil
-// }
-
-func buildYelpReq(profile SafeProfile, reqMap map[string]interface{}) YelpReq {
-	wmax := math.MinInt32
-	var tag string
-	var yr YelpReq
-
-	for _, pref := range profile.Preferences {
-		weight, _ := strconv.Atoi(pref.Weight)
-		if weight > wmax {
-			wmax = weight
-			tag = pref.Tag
-		}
-	}
-
-	yr.Categories = tag
-	yr.Latitude = fmt.Sprintf("%v", reqMap["latitude"])
-	yr.Longitude = fmt.Sprintf("%v", reqMap["longitude"])
-	yr.Radius = 40000
-	yr.Limit = 1
-	yr.StartDate = int32(time.Now().Unix())
-
-	return yr
-}
-
+// GetRecommendationEndpoint is...
 func GetRecommendationEndpoint(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("content-type", "application/json")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -125,11 +211,6 @@ func GetRecommendationEndpoint(res http.ResponseWriter, req *http.Request) {
 
 	log.WithFields(log.Fields{"req body": reqMap,}).Info("GetRecommendationEndpoint: incoming request")
 
-	// profile, err := getProfileFromToken(reqMap, ctx)
-	// if err != nil {
-	// 	res.WriteHeader(http.StatusInternalServerError)
-	// 	res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
-	// }
 	id, _ := primitive.ObjectIDFromHex(reqMap["id"].(string))
 	var profile SafeProfile
 	if err := ProfileCollection.FindOne(ctx, bson.M{"id":id}).Decode(&profile); err != nil {
@@ -138,8 +219,13 @@ func GetRecommendationEndpoint(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	yelpReq := buildYelpReq(profile, reqMap)
-	yelpRes, err := getYelpResults(&yelpReq)
+	fmt.Println(profile.Age)
+	yelpReq, err := buildYelpReq(profile, reqMap, &ctx)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	yelpRes, err := getYelpResults(&yelpReq, &ctx)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
@@ -313,3 +399,122 @@ func atoi(s string)(int){
 	i , _ := strconv.Atoi(s)
 	return i
 }
+
+var categories  = [30]string{"music", "visual-arts", "performing-arts", "film",
+"lectures-books", "fashion", "food-and-drink", "festivals-fairs", "charities", "sports-active-life", "nightlife", "kids-family"}
+
+func convert(age int) string {
+	if age >= 0 && age <= 19 {
+		return "0"
+	}
+	if age >= 20 && age <= 29 {
+		return "1"
+	}
+	if age >= 30 && age <= 39 {
+		return "2"
+	}
+	if age >= 40 && age <= 59 {
+		return "3"
+	} else {
+		return "4"
+	}
+}
+
+func ageGroup(s string) (string){
+	i := atoi(s)
+	if i < 18{
+		return "0"
+	}
+	if i < 30{
+		return "1"
+	}
+	if i < 50{
+		return "2"
+	}
+	if i < 70{
+		return "3"
+	}
+	return "4"
+}
+
+func zipCodeGroup(s string) (string){
+	i := atoi(s)
+	if i < 10000{
+		return "0"
+	}
+	if i < 20000{
+		return "1"
+	}
+	if i < 30000{
+		return "2"
+	}
+	if i < 40000{
+		return "3"
+	}
+	if i < 50000{
+		return "4"
+	}
+	if i < 60000{
+		return "5"
+	}
+	if i < 70000{
+		return "6"
+	}
+	if i < 80000{
+		return "7"
+	}
+	if i < 90000{
+		return "8"
+	}
+	return "9"
+}
+
+// {..., age: "0", zipcode: "23132", gender: "male"}
+// get birthday
+// calculate age (just year) now
+// use map to convert to range code
+
+
+/*
+	"category": "music",
+	"genders": [
+		{
+			"gender": "male",
+			"weight": "10"
+		},
+		{
+			"gender": "female",
+			"weight": "10",
+		},
+		{
+			"gender": "other",
+			"weight": "10",
+		}
+	],
+	"zipcodes": [
+
+	],
+	"ageranges": [
+		{
+			"range": "0",
+			"weight": "10",
+		},
+		{
+			"range": "1",
+			"weight": "10",
+		},
+		{
+			"range": "2",
+			"weight": "10",
+		},
+		{
+			"range": "3",
+			"weight": "10",
+		},
+		{
+			"range": "4",
+			"weight": "10",
+		},
+	],
+}
+*/

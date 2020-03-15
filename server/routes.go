@@ -34,10 +34,3 @@ func ConnectRoutes(r * mux.Router){
 
 }
 
-/*
-{
-	"latitude": "37.774929",
-	"longitude": "-122.419418"
-}
-
-*/

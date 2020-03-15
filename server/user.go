@@ -20,6 +20,10 @@ type Profile struct {
 	ID         	primitive.ObjectID `json:"id"` 
 	UserName  	string             `json:"username" mapstructure:"username"`
 	Password  	string			   `json:"password,omitempty"`
+	Gender		string			   `json:"gender"`
+	Age		    string			   `json:"age"`
+	BirthDate	string			   `json:"birthDate"`
+	ZipCode		string			   `json:"zipcode"`
 	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
 	Calendar  	[]Mood			   `json:"calendar"`
 	CreatedOn 	string             `json:"createdOn"`
@@ -28,6 +32,10 @@ type Profile struct {
 // SafeProfile is...
 type SafeProfile struct {
 	UserName  	string             `json:"username" mapstructure:"username"`
+	Gender		string			   `json:"gender"`
+	Age		    string			   `json:"age"`
+	BirthDate	string			   `json:"birthDate"`
+	ZipCode		string			   `json:"zipcode"`
 	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
 	Calendar  	[]Mood			   `json:"calendar"`
 }
