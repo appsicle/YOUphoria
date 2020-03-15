@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\": \"user1\",\r\n    \"password\": \"password\"\r\n}",
+					"raw": "{\r\n    \"username\": \"user2\",\r\n    \"password\": \"password\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -27,11 +27,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/profile/create",
+					"raw": "{{hostname}}/profile/create",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"profile",
 						"create"
@@ -65,11 +64,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/profile/login",
+					"raw": "{{hostname}}/profile/login",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"profile",
 						"login"
@@ -107,11 +105,10 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/profile/getProfile",
+					"raw": "{{hostname}}/profile/getProfile",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"profile",
 						"getProfile"
@@ -149,11 +146,10 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/profile/delete",
+					"raw": "{{hostname}}/profile/delete",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"profile",
 						"delete"
@@ -200,11 +196,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/profile/update",
+					"raw": "{{hostname}}/profile/update",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"profile",
 						"update"
@@ -221,7 +216,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "62ba3d9a-3d5d-4082-9a52-6c30ff184af8",
+							"value": "ec506811-7091-4cf0-a671-362ebd2d159b",
 							"type": "string"
 						}
 					]
@@ -242,11 +237,10 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/profile/getProfile",
+					"raw": "{{hostname}}/profile/getProfile",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"profile",
 						"getProfile"

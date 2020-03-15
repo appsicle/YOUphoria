@@ -13,7 +13,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"value": "ec506811-7091-4cf0-a671-362ebd2d159b",
 							"type": "string"
 						}
 					]
@@ -29,7 +29,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"mood\": \"sad\",\n    \"date\": \"2020-02-06\",\n    \"time\": \"13:50:21\"\n}",
+					"raw": "{\n    \"mood\": \"happy\",\n    \"date\": \"2020-03-15\",\n    \"time\": \"01:03:21\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -37,11 +37,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/mood/addMood",
+					"raw": "{{hostname}}/mood/addMood",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"mood",
 						"addMood"
@@ -82,11 +81,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/mood/getMoodsForDay",
+					"raw": "{{hostname}}/mood/getMoodsForDay",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"mood",
 						"getMoodsForDay"
@@ -118,11 +116,10 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/mood/getAllMoods",
+					"raw": "{{hostname}}/mood/getAllMoods",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"mood",
 						"getAllMoods"
@@ -163,11 +160,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/recommendation/addRecommendationFeedback",
+					"raw": "{{hostname}}/recommendation/addRecommendationFeedback",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"recommendation",
 						"addRecommendationFeedback"

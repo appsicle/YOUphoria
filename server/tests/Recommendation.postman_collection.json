@@ -13,7 +13,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"value": "ec506811-7091-4cf0-a671-362ebd2d159b",
 							"type": "string"
 						}
 					]
@@ -37,11 +37,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/recommendation/sendUserInterests",
+					"raw": "{{hostname}}/recommendation/sendUserInterests",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"recommendation",
 						"sendUserInterests"
@@ -58,7 +57,7 @@
 					"bearer": [
 						{
 							"key": "token",
-							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"value": "ec506811-7091-4cf0-a671-362ebd2d159b",
 							"type": "string"
 						}
 					]
@@ -73,11 +72,10 @@
 					}
 				],
 				"url": {
-					"raw": "localhost:8080/recommendation/getUserInterests",
+					"raw": "{{hostname}}/recommendation/getUserInterests",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"recommendation",
 						"getUserInterests"
@@ -88,21 +86,18 @@
 		},
 		{
 			"name": "localhost:8080/recommendation/getRecommendation",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "616b7acc-e8e3-48c1-b65d-f58cf047e426",
+							"value": "ec506811-7091-4cf0-a671-362ebd2d159b",
 							"type": "string"
 						}
 					]
 				},
-				"method": "GET",
+				"method": "POST",
 				"header": [
 					{
 						"key": "Content-Type",
@@ -121,11 +116,10 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/recommendation/getRecommendation",
+					"raw": "{{hostname}}/recommendation/getRecommendation",
 					"host": [
-						"localhost"
+						"{{hostname}}"
 					],
-					"port": "8080",
 					"path": [
 						"recommendation",
 						"getRecommendation"
