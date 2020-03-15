@@ -15,13 +15,14 @@ import (
 // YelpReq is...
 type YelpReq struct {
 	// Term 	  string		`json:"term"`				// mandatory
-	Category  string 		`json:"category"`
-	Location  string		`json:"location,omitempty"`
-	Latitude  string		`json:"latitude"`
-	Longitude string 		`json:"longitude"`
-	Radius 	  int			`json:"radius,omitempty"`	// max = 40000 ~25 miles
-	Limit	  int			`jons:"limit,omitempty"`	// default = 20, max = 50
-	SortBy	  string		`json:"sort_by,omitempty"`	// rating, distance, review_count, default = best_match
+	Categories string 		`json:"categories"`
+	Location   string		`json:"location,omitempty"`
+	Latitude   string		`json:"latitude"`
+	Longitude  string 		`json:"longitude"`
+	Radius 	   int			`json:"radius,omitempty"`		// max = 40000 ~25 miles
+	Limit	   int			`jons:"limit,omitempty"`		// default = 20, max = 50
+	SortBy	   string		`json:"sort_by,omitempty"`		// rating, distance, review_count, default = best_match
+	StartDate  int32 		`json:"start_date,omitempty"`	// unix timestamp
 }
 
 // ex: https://api.yelp.com/v3/businesses/search?term=taco%20truck&location=irvine&sort_by=rating&radius=20000
