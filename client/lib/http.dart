@@ -6,20 +6,19 @@ const URL = 'http://localhost:8080/';
 Future<Response> postData(endpoint, json, token) async {
   var headers = {"Content-type": "application/json"};
   if (token != null) {
-    headers["token"] = token;
+    headers["Authorization"] = "Bearer " + token;
   }
-  Response response = await post(URL + endpoint,
-      headers: headers, body: jsonEncode(json));
+  Response response =
+      await post(URL + endpoint, headers: headers, body: jsonEncode(json));
   return response;
 }
 
-Future<Response> getData(endpoint, json, token) async {
-    var headers = {"Content-type": "application/json"};
+Future<Response> getData(endpoint, token) async {
+  var headers = {"Content-type": "application/json"};
   if (token != null) {
-    headers["token"] = token;
+    headers["Authorization"] = "Bearer " + token;
   }
-  Response response = await get(URL + endpoint,
-      headers: headers);
+  Response response = await get(URL + endpoint, headers: headers);
   return response;
 }
 
