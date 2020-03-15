@@ -84,10 +84,9 @@ class _UserInterestsState extends State<UserInterests> {
                 disabledColor: Colors.grey[300],
                 onPressed: _selectedActivities.length > 0
                     ? () async {
-                        // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
-                            "recommendation/sendFeedback",
-                            {'tags': _selectedActivities, 'liked':1},
+                            "recommendation/sendUserInterests",
+                            {'interests': _selectedActivities},
                             _token);
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');

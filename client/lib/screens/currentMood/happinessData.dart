@@ -10,7 +10,6 @@ class HappinessData extends StatelessWidget {
   HappinessData({Key key, @required this.username, @required this.token})
       : super(key: key);
 
-  // TODO edit this list to be the categories that Harrison is providing us
   static final Map<String, String> possibleActivities = {
     "Music": "music",
     "Visual Arts": "visual-arts",
@@ -115,7 +114,7 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                         // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
                             "recommendation/sendFeedback",
-                            {'tags': selectedActivities, 'liked':1},
+                            {'tags': selectedActivities, 'liked': 1},
                             _token);
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');
