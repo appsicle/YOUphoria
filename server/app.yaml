@@ -1,0 +1,5 @@
+runtime: go113
+
+env_variables:
+  YELPTOKEN: bearer WKsK6iJI3Y7UrBXK1Mi26_H-R3R-xV-UWlGZRa7glCSGEsYXxTcQxZZBNy1CKybr-5YLtqTJBsbEz2hf7USKrnhpHTQ4gJKv58bl4z2JmoaSJ0Dapdxfc5dLouNtXnYx
+  MONGOURI: mongodb+srv://testacc:DzAbfsJxl56RPPsr@youphoria-r8kiz.mongodb.net/test?retryWrites=true&w=majority
