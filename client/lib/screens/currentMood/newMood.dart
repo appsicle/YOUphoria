@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:client/http.dart';
 import '../home/home.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:convert';
 
 class NewMood extends StatelessWidget {
   final String username;
@@ -58,7 +59,8 @@ class SliderState extends State<MoodSlider> {
   Position _currentPosition;
   String _currentMood =
       "okay"; // todo eventually will be used when sending data to backend
-  var event = {};
+  var _event = {};
+  String _recommendationCategory = "";
 
   SliderState(this._username, this._token);
 
@@ -121,7 +123,8 @@ class SliderState extends State<MoodSlider> {
                     'recommendation/getRecommendation', json, this._token);
                 var body = decodeBody(response.body);
                 setState(() {
-                  event = body;
+                  _event = body;
+                  _recommendationCategory = _event['category'];
                 });
                 _goToRecommendationPopup();
               }
@@ -161,15 +164,6 @@ class SliderState extends State<MoodSlider> {
   }
 
   void _goToRecommendationPopup() async {
-    // TODO send mood data to backend (API call)
-
-    // TODO check if for some reason _currentPosition is null, handle that case
-    // can use _currentPosition.latitude and currentPosition.longitude
-
-    // TODO do another API call to get actual recommendation and send in location
-
-    int recommendationId = 123; // temp
-
     await showDialog(
         context: context,
         builder: (context) {
@@ -177,7 +171,7 @@ class SliderState extends State<MoodSlider> {
             dialogStyle: DialogStyle(titleDivider: true),
             title: Container(
               padding: EdgeInsets.all(10.0),
-              child: Text(event['name']),
+              child: Text(_event['name']),
             ),
             content: FractionallySizedBox(
               heightFactor: .8,
@@ -189,11 +183,11 @@ class SliderState extends State<MoodSlider> {
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(10.0),
                       child: Column(children: [
-                        Text(event['description']),
+                        Text(_event['description']),
                         Container(
                           padding: EdgeInsets.only(top: 10, bottom: 10),
                           child: Image(
-                            image: NetworkImage(event['image_url']),
+                            image: NetworkImage(_event['image_url']),
                           ),
                         ),
                         Container(
@@ -204,11 +198,11 @@ class SliderState extends State<MoodSlider> {
                                         decoration: TextDecoration.underline,
                                         color: Colors.blue)),
                                 onTap: () async {
-                                  await launch(event['event_site_url']);
+                                  await launch(_event['event_site_url']);
                                 })),
                         Container(
                           padding: EdgeInsets.only(bottom: 10),
-                          child: Text('Category: ' + event['category']),
+                          child: Text('Category: ' + _event['category']),
                         )
                       ]),
                     ),
@@ -230,9 +224,9 @@ class SliderState extends State<MoodSlider> {
               Container(
                 padding: EdgeInsets.all(20.0),
                 child: FlatButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await _rateRecommendation("1");
                     Navigator.of(context).pop();
-                    rateRecommendation(recommendationId, 1);
                   },
                   color: Colors.greenAccent[700],
                   child: Icon(
@@ -244,9 +238,9 @@ class SliderState extends State<MoodSlider> {
               Container(
                 padding: EdgeInsets.all(20.0),
                 child: FlatButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await _rateRecommendation("0");
                     Navigator.of(context).pop();
-                    rateRecommendation(recommendationId, 0);
                   },
                   color: Colors.redAccent,
                   child: Icon(
@@ -265,14 +259,17 @@ class SliderState extends State<MoodSlider> {
                 new Home(username: _username, token: _token)));
   }
 
-  // TODO send feedback on recommendation
-  // rating should only be 0 (bad) or 1 (good)
-  void rateRecommendation(int recommendationId, int rating) {
-    // postData(endpoint, json, _token)
-    print("recommendation with ID: " +
-        recommendationId.toString() +
-        " rated: " +
-        rating.toString());
+  // rating should only be 0 (bad) or 1 (good), and be a String
+  Future<void> _rateRecommendation(String rating) async {
+    var feedbackInformation = {
+      'tags': [_recommendationCategory],
+      'liked': rating
+    };
+    var response = await postData(
+        "recommendation/sendFeedback", feedbackInformation, _token);
+    if (response.statusCode != 200) {
+      print('failed to send feedback');
+    }
   }
 
   void _updateCurrentLocation() {
@@ -285,7 +282,6 @@ class SliderState extends State<MoodSlider> {
       });
     }).catchError((e) {
       print(e);
-      // Navigator.of(context).pop();
     });
   }
 }

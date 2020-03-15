@@ -18,7 +18,7 @@ class HappinessData extends StatelessWidget {
     "Lectures & Books": "lectures-books",
     "Fashion": "fashion",
     "Food & Drink": "food-and-drink",
-    "Festivals & Fairs": "festival-fairs",
+    "Festivals & Fairs": "festivals-fairs",
     "Charities": "charities",
     "Sports & Active Life": "sports-active-life",
     "Nightlife": "nightlife",
@@ -73,7 +73,7 @@ class _EnterMoodDataState extends State<EnterMoodData> {
           Expanded(
             flex: 9,
             child: Container(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(10),
               child: GridView.count(
                 crossAxisCount: 4,
                 mainAxisSpacing: 10,
@@ -109,15 +109,13 @@ class _EnterMoodDataState extends State<EnterMoodData> {
                 disabledColor: Colors.grey[300],
                 onPressed: selectedActivities.length > 0
                     ? () async {
-                        // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
                             "recommendation/sendFeedback",
-                            {'tags': selectedActivities, 'liked': 1},
+                            {'tags': selectedActivities, 'liked': "1"},
                             _token);
                         if (response.statusCode != 200) {
-                          print('failed to send user interests.');
+                          print('failed to send feedback');
                         }
-                        // todo: setState() called after dispose()
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(
                                 builder: (BuildContext ctx) => new Home(

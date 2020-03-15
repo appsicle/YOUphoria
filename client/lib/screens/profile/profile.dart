@@ -20,6 +20,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   String token;
   String username;
+  String gender = "";
+  String age = "";
+  String birthDate = "";
+  String zipcode = "";
   var preferences = [];
 
   _ProfileState(this.username, this.token);
@@ -33,12 +37,16 @@ class _ProfileState extends State<Profile> {
   void getProfile() async {
     var response = await getData('profile/getProfile', this.token);
     if (response.statusCode != 200) {
-      this.preferences = [];
       print('failed to get user profile.');
       return;
     }
+    var body = decodeBody(response.body);
     setState(() {
-      this.preferences = decodeBody(response.body)['preferences'];
+      this.gender = body['gender'];
+      this.age = body['age'];
+      this.birthDate = body['birthDate'];
+      this.zipcode = body['zipcode'];
+      this.preferences = body['preferences'];
     });
   }
 

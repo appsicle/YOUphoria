@@ -50,7 +50,7 @@ class _UserInterestsState extends State<UserInterests> {
           Expanded(
             flex: 9,
             child: Container(
-              padding: EdgeInsets.fromLTRB(25.0, 0, 25.0, 25.0),
+              padding: EdgeInsets.all(10),
               child: GridView.count(
                 crossAxisCount: 4,
                 mainAxisSpacing: 10.0,
