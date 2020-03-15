@@ -84,6 +84,7 @@ class _CreateAccountState extends State<CreateAccount> {
                 disabledColor: Colors.grey[300],
                 onPressed: _selectedActivities.length > 0
                     ? () async {
+                        // TODO USE NEW SEND FEEDBACK ENDPOINT
                         var response = await postData(
                             "recommendation/sendUserInterests",
                             {'interests': _selectedActivities},
