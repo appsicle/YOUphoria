@@ -30,8 +30,8 @@ type Preferences struct {
 
 // ZipCode is...
 type ZipCode struct {
-	Zip		string 	`json:"zipcode"`
-	Weight	string 	`json:"weight"`
+	ZipCode		string 	`json:"zipcode"`
+	Weight		string 	`json:"weight"`
 }
 
 // ZipCodes is...
@@ -68,6 +68,52 @@ type CategoryDoc struct {
 	Genders		[]Gender	`json:"genders"`
 	AgeRanges	[]AgeRange	`json:"ageranges"`
 }
+
+/* ex:
+{
+	"id": "fsdjkfhdslkfjsdbcsdejf",
+	"category": "music",
+	"genders": [
+		{
+			"gender": "male",
+			"weight": "10"
+		},
+		{
+			"gender": "female",
+			"weight": "10",
+		},
+		{
+			"gender": "other",
+			"weight": "10",
+		}
+	],
+	"zipcodes": [
+
+	],
+	"ageranges": [
+		{
+			"range": "0",
+			"weight": "10",
+		},
+		{
+			"range": "1",
+			"weight": "10",
+		},
+		{
+			"range": "2",
+			"weight": "10",
+		},
+		{
+			"range": "3",
+			"weight": "10",
+		},
+		{
+			"range": "4",
+			"weight": "10",
+		},
+	],
+}
+*/
 
 func (p Preference) String() string {
     return fmt.Sprintf(`'Tag': '%s', 'Weight': '%s'`, p.Tag, p.Weight)
@@ -115,8 +161,9 @@ func cfGetZipcodeRangeWeight(tag string, zipcode string, ctx *context.Context) (
 		log.Info("Exiting cfGetZipcodeRangeWeight with error...")
 		return 0, err
 	}
+
 	for _, sZip := range categoryDoc.ZipCodes {
-		if sZip.Zip == zipCodeGroup(zipcode) {
+		if sZip.ZipCode == zipCodeGroup(zipcode) {
 			result, _ = strconv.Atoi(sZip.Weight)
 		}	
 	}
@@ -139,7 +186,7 @@ func getTopCategory(profile *SafeProfile, ctx *context.Context) (string, error) 
 		if zErr != nil { return "", zErr}
 		
 		total := float64(weight) + (float64(gWeight) * 0.9) + (float64(arWeight) * 0.5) + (float64(zWeight) * 0.6)
-		fmt.Println(total, " ", )
+		// fmt.Println(total, " ", )
 		if total > wmax {
 			wmax = total
 			tag = pref.Tag
@@ -168,12 +215,8 @@ func buildYelpReq(profile SafeProfile, reqMap map[string]interface{}, ctx *conte
 }
 
 func getYelpResults(yelpreq *YelpReq, ctx *context.Context) (interface{}, error) {
-	// ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	// defer cancel()
-
 	reqMap := make(map[string]interface{})
 	j, _ := json.Marshal(yelpreq); json.Unmarshal(j, &reqMap)	// struct -> json -> map
-	fmt.Println(reqMap)
 	reqMap["start_date"] = int(reqMap["start_date"].(float64))
 	queryTerms := url.Values{}
 	for key, val := range reqMap {	
@@ -219,7 +262,6 @@ func GetRecommendationEndpoint(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println(profile.Age)
 	yelpReq, err := buildYelpReq(profile, reqMap, &ctx)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
@@ -474,47 +516,3 @@ func zipCodeGroup(s string) (string){
 // calculate age (just year) now
 // use map to convert to range code
 
-
-/*
-	"category": "music",
-	"genders": [
-		{
-			"gender": "male",
-			"weight": "10"
-		},
-		{
-			"gender": "female",
-			"weight": "10",
-		},
-		{
-			"gender": "other",
-			"weight": "10",
-		}
-	],
-	"zipcodes": [
-
-	],
-	"ageranges": [
-		{
-			"range": "0",
-			"weight": "10",
-		},
-		{
-			"range": "1",
-			"weight": "10",
-		},
-		{
-			"range": "2",
-			"weight": "10",
-		},
-		{
-			"range": "3",
-			"weight": "10",
-		},
-		{
-			"range": "4",
-			"weight": "10",
-		},
-	],
-}
-*/
