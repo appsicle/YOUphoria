@@ -38,6 +38,8 @@ func getYelpResults(yelpreq *YelpReq) (interface{}, error) {
 
 	reqMap := make(map[string]interface{})
 	j, _ := json.Marshal(yelpreq); json.Unmarshal(j, &reqMap)	// struct -> json -> map
+	fmt.Println(reqMap)
+	reqMap["start_date"] = int(reqMap["start_date"].(float64))
 	queryTerms := url.Values{}
 	for key, val := range reqMap {	
 		queryTerms.Add(key, fmt.Sprintf("%v", val))
@@ -100,11 +102,12 @@ func buildYelpReq(profile SafeProfile, reqMap map[string]interface{}) YelpReq {
 		}
 	}
 
-	yr.Category = tag
+	yr.Categories = tag
 	yr.Latitude = fmt.Sprintf("%v", reqMap["latitude"])
 	yr.Longitude = fmt.Sprintf("%v", reqMap["longitude"])
-	yr.Radius = 20000
+	yr.Radius = 40000
 	yr.Limit = 1
+	yr.StartDate = int32(time.Now().Unix())
 
 	return yr
 }

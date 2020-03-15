@@ -57,7 +57,7 @@ class MoodDisplay extends StatefulWidget {
 }
 
 class _MoodDisplayState extends State<MoodDisplay> {
-  List<String> _todaysMoods = [];
+  List<dynamic> _todaysMoods = [];
   String token;
 
   _MoodDisplayState(token) {

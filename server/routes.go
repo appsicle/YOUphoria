@@ -33,3 +33,11 @@ func ConnectRoutes(r * mux.Router){
 	auth_r.HandleFunc("/recommendation/addRecommendationFeedback", AddRecommendationFeedbackEndpoint).Methods("POST")
 
 }
+
+/*
+{
+	"latitude": "37.774929",
+	"longitude": "-122.419418"
+}
+
+*/
