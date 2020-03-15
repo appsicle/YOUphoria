@@ -99,6 +99,12 @@ class _ProfileState extends State<Profile> {
                     // logout so remove this cached data
                     prefs.remove('username');
                     prefs.remove('token');
+
+                    var response = await getData('profile/logout', this.token);
+                    if (response.statusCode != 200) {
+                      print("Logout failed.");
+                    }
+
                     Navigator.of(context, rootNavigator: true).pushReplacement(
                         MaterialPageRoute(
                             builder: (BuildContext ctx) => new Login()));
