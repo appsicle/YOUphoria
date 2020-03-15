@@ -71,6 +71,8 @@ class Login extends StatelessWidget {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('username', username);
         prefs.setString('token', token);
+        print("login");
+        print(token);
 
         Navigator.push(
             context,
@@ -126,7 +128,8 @@ class Login extends StatelessWidget {
         "username": username,
         "password": password
       };
-      var response = await postData("profile/create", createAccountInformation, null);
+      var response =
+          await postData("profile/create", createAccountInformation, null);
       var body = decodeBody(response.body);
 
       // SUCCESS -> redirect to create account page (to send interests)
