@@ -74,8 +74,6 @@ class _MoodDisplayState extends State<MoodDisplay> {
     var now = new DateTime.now();
     String formattedDate = new DateFormat("yyyy-MM-dd").format(now);
     var dateInformation = {"date": formattedDate};
-    print("in daily moods");
-    print(token);
     var response =
         await postData("mood/getMoodsForDay", dateInformation, this.token);
     var body = jsonDecode(response.body);

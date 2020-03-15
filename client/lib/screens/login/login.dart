@@ -71,8 +71,6 @@ class Login extends StatelessWidget {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('username', username);
         prefs.setString('token', token);
-        print("login");
-        print(token);
 
         Navigator.push(
             context,
