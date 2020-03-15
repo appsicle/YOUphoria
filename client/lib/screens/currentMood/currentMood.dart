@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import './newMood.dart';
+import 'package:intl/intl.dart';
+import 'package:client/main.dart';
+import 'package:http/http.dart';
+import 'dart:convert';
 
 class CurrentMood extends StatelessWidget {
   final String username;
@@ -38,13 +42,46 @@ class AddMood extends StatelessWidget {
           Container(
             height: 88, // estimated height of top title bar
           ),
-          MoodDisplay(),
+          MoodDisplay(token: token),
           AddMoodButton(username: username, token: token),
         ]);
   }
 }
 
-class MoodDisplay extends StatelessWidget {
+class MoodDisplay extends StatefulWidget {
+  final String token;
+
+  MoodDisplay({Key key, @required this.token}) : super(key: key);
+
+  @override
+  _MoodDisplayState createState() => _MoodDisplayState(this.token);
+}
+
+class _MoodDisplayState extends State<MoodDisplay> {
+  List<String> _todaysMoods = [];
+  String token;
+
+  _MoodDisplayState(token) {
+    this.token = token;
+    setDailyMoods();
+  }
+
+  void setDailyMoods() async {
+    var now = new DateTime.now();
+    var formattedDate = new DateFormat("yyyy-MM-dd").format(now);
+    var dateInformation = {"date": formattedDate};
+    Response response =
+        await postData("profile/login", dateInformation, this.token);
+    var body = jsonDecode(response.body);
+    if (response.statusCode == 200) {
+      if (body["calendar"].length > 0) {
+        setState(() {
+          _todaysMoods = body["calendar"].map((e) => e["mood"]).toList();
+        });
+      }
+    }
+  }
+
   final Map<String, Color> moodsToColor = {
     "amazing": Colors.greenAccent[400],
     "happy": Colors.greenAccent,
@@ -90,19 +127,18 @@ class MoodDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO get todaysMoods from API call
-    List<String> todaysMoods = ["sad", "happy", "amazing", "horrible", "okay"];
+    setDailyMoods();
     List<Color> todaysColors;
     List<double> todaysStops;
 
-    if (todaysMoods.length == 0) {
+    if (_todaysMoods.length == 0) {
       // case: no mood data entered for the day yet
       todaysColors = [
         Colors.grey,
         Colors.grey[300],
       ];
     } else {
-      todaysColors = generateColorsList(todaysMoods);
+      todaysColors = generateColorsList(_todaysMoods);
     }
     todaysStops = generateStops(todaysColors);
 
@@ -112,25 +148,25 @@ class MoodDisplay extends StatelessWidget {
           width: 300.0,
           height: 300.0,
           decoration: new BoxDecoration(
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey,
-                    blurRadius: 15.0, // soften the shadow
-                    spreadRadius: 2.5, //extend the shadow
-                    offset: Offset(
-                      10.0, // Move to right 10  horizontally
-                      10.0, // Move to bottom 10 Vertically
-                    ),
-                  )
-                ],
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: todaysColors,
-                  stops: todaysStops,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey,
+                blurRadius: 15.0, // soften the shadow
+                spreadRadius: 2.5, //extend the shadow
+                offset: Offset(
+                  10.0, // Move to right 10  horizontally
+                  10.0, // Move to bottom 10 Vertically
                 ),
-              ),
+              )
+            ],
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: todaysColors,
+              stops: todaysStops,
+            ),
+          ),
           child: Material(
             clipBehavior: Clip.hardEdge,
             color: Colors.transparent,

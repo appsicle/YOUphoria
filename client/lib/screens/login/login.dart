@@ -8,7 +8,6 @@ import 'dart:convert';
 import 'package:client/main.dart';
 
 class Login extends StatelessWidget {
-
   final TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
   final usernameTextController = TextEditingController();
@@ -19,8 +18,6 @@ class Login extends StatelessWidget {
 
   final RegExp validPasswordExpression = new RegExp(
       r'^(?=(?:[^a-z]*[a-z]){1})(?=(?:[^0-9]*[0-9]){1})(?=.*[!-\/:-@\[-`{-~]).{8,20}$');
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +64,8 @@ class Login extends StatelessWidget {
       String password = passwordTextController.text.trim();
 
       var loginInformation = {"username": username, "password": password};
-      Response response = await postData("profile/login", loginInformation);
+      Response response =
+          await postData("profile/login", loginInformation, Null);
       var body = jsonDecode(response.body);
 
       // SUCCESS -> redirect to homepage
@@ -102,15 +100,15 @@ class Login extends StatelessWidget {
 
       // TODO uncomment this out when ready to actually check for valid username/password (commented out for easier testing)
       // if (!validUsernameExpression.hasMatch(username)) {
-        // showDialog(
-        //   context: context,
-        //   builder: (_) => AlertDialog(
-        //     title: Text("Oop! Username Invalid!"),
-        //     content: Text(
-        //         "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
-        //   ),
-        //   barrierDismissible: true,
-        // );
+      // showDialog(
+      //   context: context,
+      //   builder: (_) => AlertDialog(
+      //     title: Text("Oop! Username Invalid!"),
+      //     content: Text(
+      //         "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
+      //   ),
+      //   barrierDismissible: true,
+      // );
       //   return;
       // }
 
@@ -132,7 +130,7 @@ class Login extends StatelessWidget {
         "password": password
       };
       Response response =
-          await postData("profile/create", createAccountInformation);
+          await postData("profile/create", createAccountInformation, null);
       var body = jsonDecode(response.body);
 
       // SUCCESS -> redirect to create account page (to send interests)

@@ -18,15 +18,23 @@ Future<void> main() async {
   ));
 }
 
-Future<Response> postData(endpoint, json) async {
+Future<Response> postData(endpoint, json, token) async {
+  var headers = {"Content-type": "application/json"};
+  if (token != null) {
+    headers["token"] = token;
+  }
   Response response = await post('http://localhost:8080/' + endpoint,
-      headers: {"Content-type": "application/json"}, body: jsonEncode(json));
+      headers: headers, body: jsonEncode(json));
   return response;
 }
 
-Future<Response> getData(endpoint, json) async {
-  Response response = await get('http://localhost:8080/' + endpoint,
-      headers: {"Content-type": "application/json"});
+Future<Response> getData(endpoint, json, token) async {
+  var headers = {"Content-type": "application/json"};
+  if (token != null) {
+    headers["token"] = token;
+  }
+  Response response =
+      await get('http://localhost:8080/' + endpoint, headers: headers);
   return response;
 }
 
