@@ -99,10 +99,7 @@ class SliderState extends State<MoodSlider> {
                 "date": formattedDate,
                 "time": formattedTime
               };
-              var response =
-                  await postData("mood/addMood", moodInformation, this._token);
-              print(response.statusCode);
-
+              await postData("mood/addMood", moodInformation, this._token);
               if (_moodValue >= _threshold) {
                 _goToHappinessDataScreen();
               } else {
