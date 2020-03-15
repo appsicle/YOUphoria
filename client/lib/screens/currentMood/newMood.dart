@@ -3,6 +3,10 @@ import 'package:flutter/cupertino.dart';
 import './happinessData.dart';
 import 'package:ndialog/ndialog.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
+import 'dart:convert';
+import 'package:client/http.dart';
+import 'currentMood.dart';
 
 class NewMood extends StatelessWidget {
   final String username;
@@ -59,8 +63,6 @@ class SliderState extends State<MoodSlider> {
 
   @override
   Widget build(BuildContext context) {
-    _updateCurrentLocation();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -88,8 +90,20 @@ class SliderState extends State<MoodSlider> {
             minSize: 60,
             padding: EdgeInsets.all(15.0),
             borderRadius: BorderRadius.circular(15.0),
-            onPressed: () {
+            onPressed: () async {
               _updateCurrentLocation(); // update current location
+              var now = new DateTime.now();
+              String formattedDate = new DateFormat("yyyy-MM-dd").format(now);
+              String formattedTime = new DateFormat("H:m:s").format(now);
+              var moodInformation = {
+                "mood": this._currentMood,
+                "date": formattedDate,
+                "time": formattedTime
+              };
+              var response =
+                  await postData("mood/addMood", moodInformation, this._token);
+              print(response.statusCode);
+
               if (_moodValue >= _threshold) {
                 _goToHappinessDataScreen();
               } else {
@@ -212,7 +226,10 @@ class SliderState extends State<MoodSlider> {
           );
         });
 
-    Navigator.of(context).pop();
+    Navigator.of(context, rootNavigator: true).pushReplacement(
+        MaterialPageRoute(
+            builder: (BuildContext ctx) =>
+                new CurrentMood(username: _username, token: _token)));
   }
 
   // TODO send feedback on recommendation
@@ -235,7 +252,6 @@ class SliderState extends State<MoodSlider> {
     }).catchError((e) {
       print(e);
       // Navigator.of(context).pop();
-      
     });
   }
 }
