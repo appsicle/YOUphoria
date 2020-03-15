@@ -2,14 +2,48 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../login/login.dart';
+import 'package:client/http.dart';
+import 'dart:math';
 
 // TODO finalize what is going to go on this screen and DO IT
-class Profile extends StatelessWidget {
+class Profile extends StatefulWidget {
   final String username;
   final String token;
 
   Profile({Key key, @required this.username, @required this.token})
       : super(key: key);
+
+  @override
+  _ProfileState createState() => _ProfileState(token);
+}
+
+class _ProfileState extends State<Profile> {
+  String token;
+  var preferences;
+
+  _ProfileState(token) {
+    this.token = token;
+  }
+
+  @override
+  void initState() {
+    getProfile();
+    super.initState();
+  }
+
+  void getProfile() async {
+    var response = await getData('profile/getProfile', this.token);
+    if (response.statusCode != 200) {
+      this.preferences = [];
+      print('failed to get user profile.');
+      return;
+    }
+    setState(() {
+      print(decodeBody(response.body));
+      this.preferences = decodeBody(response.body)['preferences'];
+      print(this.preferences);
+    });
+  }
 
   Container profileData(data) {
     return Container(
@@ -39,24 +73,24 @@ class Profile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
-              flex: 1,
-              child: Container(),
-            ),
-            Expanded(
-              flex: 6,
-              child: ListView(
-                padding: const EdgeInsets.all(0.0),
-                children: [
-                  profileData("Username: " + this.username),
-                  profileData("placeholder"),
-                  profileData("placeholder"),
-                  profileData("placeholder"),
-                  profileData("placeholder"),
-                ],
+              child: Center(
+                child: Text(
+                  this.widget.username,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
             ),
             Expanded(
-              flex: 3,
+              child: ListView(
+                padding: const EdgeInsets.all(0.0),
+                children:
+                    List.generate(max(this.preferences.length, 20), (index) {
+                  return profileData(this.preferences[1]['tag']);
+                }),
+              ),
+            ),
+            Expanded(
               child: Center(
                 child: RaisedButton(
                   color: Colors.indigoAccent,
