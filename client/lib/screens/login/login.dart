@@ -78,7 +78,7 @@ class Login extends StatelessWidget {
                 builder: (BuildContext ctx) =>
                     new Home(username: username, token: token)));
       } else {
-        // TODO: FAIL -> display fail on screen
+        // FAIL -> display fail on screen
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -90,7 +90,6 @@ class Login extends StatelessWidget {
       }
     }
 
-    // TODO make create account function
     void _createAccount() async {
       String username = usernameTextController.text.trim();
       String password = passwordTextController.text.trim();
@@ -128,8 +127,8 @@ class Login extends StatelessWidget {
       };
       var response =
           await postData("profile/create", createAccountInformation, null);
-          print('made it.');
-        print(response.body);
+      print('made it.');
+      print(response.body);
       var body = decodeBody(response.body);
 
       // SUCCESS -> redirect to create account page (to send interests)
@@ -145,7 +144,7 @@ class Login extends StatelessWidget {
                 builder: (BuildContext ctx) =>
                     new CreateAccount(username: username, token: token)));
       } else {
-        // TODO: FAIL -> error in account creation, duplicate username, display this to the user somehow
+        // FAIL -> error in account creation, duplicate username, display this to the user somehow
         showDialog(
           context: context,
           builder: (_) => AlertDialog(
@@ -170,8 +169,9 @@ class Login extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                SizedBox(
-                  height: 100.0,
+                Expanded(flex: 1, child: Container()),
+                Container(
+                  padding: const EdgeInsets.all(20.0),
                   child: Center(
                     child: Text(
                       "YOUphoria",
@@ -183,7 +183,6 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 30.0),
                 usernameField,
                 SizedBox(height: 25.0),
                 passwordField,
@@ -195,9 +194,7 @@ class Login extends StatelessWidget {
                   height: 15.0,
                 ),
                 createAccountButton,
-                SizedBox(
-                  height: 15.0,
-                ),
+                Expanded(flex: 1, child: Container()),
               ],
             ),
           ),

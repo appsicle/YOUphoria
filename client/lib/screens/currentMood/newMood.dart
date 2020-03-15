@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:client/http.dart';
 import '../home/home.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NewMood extends StatelessWidget {
   final String username;
@@ -57,8 +58,15 @@ class SliderState extends State<MoodSlider> {
   Position _currentPosition;
   String _currentMood =
       "okay"; // todo eventually will be used when sending data to backend
+  var event = {};
 
   SliderState(this._username, this._token);
+
+  @override
+  void initState() {
+    _updateCurrentLocation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +99,7 @@ class SliderState extends State<MoodSlider> {
             borderRadius: BorderRadius.circular(15.0),
             onPressed: () async {
               _updateCurrentLocation(); // update current location
+              print(_currentPosition);
               var now = new DateTime.now();
               String formattedDate = new DateFormat("yyyy-MM-dd").format(now);
               String formattedTime = new DateFormat("HH:mm:ss").format(now);
@@ -103,6 +112,19 @@ class SliderState extends State<MoodSlider> {
               if (_moodValue >= _threshold) {
                 _goToHappinessDataScreen();
               } else {
+                var json = {
+                  'username': this.widget._username,
+                  'token': this._token,
+                  'latitude': _currentPosition.latitude,
+                  'longitude': _currentPosition.longitude
+                };
+                var response = await postData(
+                    'recommendation/getRecommendation', json, this._token);
+                var body = decodeBody(response.body);
+                setState(() {
+                  event = body;
+                });
+                print(body);
                 _goToRecommendationPopup();
               }
             },
@@ -149,8 +171,6 @@ class SliderState extends State<MoodSlider> {
     // TODO do another API call to get actual recommendation and send in location
 
     int recommendationId = 123; // temp
-    String recommendation =
-        "temporary recommendation this text area is scrollable btw when it overflows"; // temp
 
     await showDialog(
         context: context,
@@ -159,11 +179,10 @@ class SliderState extends State<MoodSlider> {
             dialogStyle: DialogStyle(titleDivider: true),
             title: Container(
               padding: EdgeInsets.all(10.0),
-              child: Text(
-                  "We see that you're not feeling too great, here's a recommendation!"),
+              child: Text(event['name']),
             ),
-            content: Container(
-              height: 200,
+            content: FractionallySizedBox(
+              heightFactor: .8,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -171,9 +190,29 @@ class SliderState extends State<MoodSlider> {
                   Expanded(
                     child: SingleChildScrollView(
                       padding: EdgeInsets.all(10.0),
-                      child: Container(
-                        child: Text(recommendation),
-                      ),
+                      child: Column(children: [
+                        Text(event['description']),
+                        Container(
+                          padding: EdgeInsets.only(top: 10, bottom: 10),
+                          child: Image(
+                            image: NetworkImage(event['image_url']),
+                          ),
+                        ),
+                        Container(
+                            padding: EdgeInsets.only(bottom: 10),
+                            child: GestureDetector(
+                                child: Text("Click here",
+                                    style: TextStyle(
+                                        decoration: TextDecoration.underline,
+                                        color: Colors.blue)),
+                                onTap: () async {
+                                  await launch(event['event_site_url']);
+                                })),
+                        Container(
+                          padding: EdgeInsets.only(bottom: 10),
+                          child: Text('Category: ' + event['category']),
+                        )
+                      ]),
                     ),
                   ),
                   Container(
@@ -231,6 +270,7 @@ class SliderState extends State<MoodSlider> {
   // TODO send feedback on recommendation
   // rating should only be 0 (bad) or 1 (good)
   void rateRecommendation(int recommendationId, int rating) {
+    // postData(endpoint, json, _token)
     print("recommendation with ID: " +
         recommendationId.toString() +
         " rated: " +
