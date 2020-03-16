@@ -61,7 +61,7 @@ class _CalendarPageState extends State<CalendarPage>
   CalendarController _calendarController;
   final String _token;
   final String _username;
-  String _selectedDay;
+  String _selectedDayFormatted;
 
   _CalendarPageState(this._username, this._token);
 
@@ -69,6 +69,8 @@ class _CalendarPageState extends State<CalendarPage>
   void initState() {
     super.initState();
     final _selectedDay = DateTime.now();
+    _selectedDayFormatted =
+        DateFormat("yyyy-MM-dd", "en_US").format(_selectedDay);
 
     _moodsByDate = {};
 
@@ -121,7 +123,7 @@ class _CalendarPageState extends State<CalendarPage>
   void _onDaySelected(DateTime day, List events) {
     setState(() {
       _selectedMoods = events;
-      _selectedDay = DateFormat("yyyy-MM-dd", "en_US").format(day);
+      _selectedDayFormatted = DateFormat("yyyy-MM-dd", "en_US").format(day);
     });
   }
 
@@ -179,12 +181,12 @@ class _CalendarPageState extends State<CalendarPage>
 
     void addMood() {
       // navigate to add mood page and provide date and time
-      print(_selectedDay);
+      print(_selectedDayFormatted);
       Navigator.of(context).push(CupertinoPageRoute(
         builder: (context) => NewMood(
             username: _username,
             token: _token,
-            date: _selectedDay,
+            date: _selectedDayFormatted,
             time: "12:00:00"), // default time is 12:00:00
       ));
     }
@@ -192,7 +194,7 @@ class _CalendarPageState extends State<CalendarPage>
     SelectedMoodWidget addMoodOnSelectedDayButton =
         SelectedMoodWidget("Add a Mood for this Day", addMood);
     DateTime selectedDateTime =
-        new DateFormat("yyyy-MM-dd", "en_US").parse(_selectedDay);
+        new DateFormat("yyyy-MM-dd", "en_US").parse(_selectedDayFormatted);
 
     // only add option to add mood if the date is before today or is today
     if (selectedDateTime.isBefore(DateTime.now()) ||
