@@ -94,32 +94,31 @@ class Login extends StatelessWidget {
       String username = usernameTextController.text.trim();
       String password = passwordTextController.text.trim();
 
-      // TODO uncomment this out when ready to actually check for valid username/password (commented out for easier testing)
-      // if (!validUsernameExpression.hasMatch(username)) {
-      // showDialog(
-      //   context: context,
-      //   builder: (_) => AlertDialog(
-      //     title: Text("Oop! Username Invalid!"),
-      //     content: Text(
-      //         "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
-      //   ),
-      //   barrierDismissible: true,
-      // );
-      //   return;
-      // }
+      if (!validUsernameExpression.hasMatch(username)) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Oop! Username Invalid!"),
+            content: Text(
+                "Username requirements: Only allowed alphanumeric characters and '_', between 5 and 14 characters."),
+          ),
+          barrierDismissible: true,
+        );
+        return;
+      }
 
-      // if (!validPasswordExpression.hasMatch(password)) {
-      //   showDialog(
-      //     context: context,
-      //     builder: (_) => AlertDialog(
-      //       title: Text("Yikes! Password Invalid!"),
-      //       content: Text(
-      //           "Password requirements: 1 letter, 1 number, 1 special character, between 8 and 20 characters"),
-      //     ),
-      //     barrierDismissible: true,
-      //   );
-      //   return;
-      // }
+      if (!validPasswordExpression.hasMatch(password)) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: Text("Yikes! Password Invalid!"),
+            content: Text(
+                "Password requirements: 1 letter, 1 number, 1 special character, between 8 and 20 characters"),
+          ),
+          barrierDismissible: true,
+        );
+        return;
+      }
 
       var createAccountInformation = {
         "username": username,
