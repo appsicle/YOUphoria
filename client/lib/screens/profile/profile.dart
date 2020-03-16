@@ -61,9 +61,9 @@ class _ProfileState extends State<Profile> {
       label: new Text(
         interest,
         style: TextStyle(
-          fontWeight: FontWeight.bold,
+          // fontWeight: FontWeight.bold,
           fontSize: 20,
-          color: Colors.white,
+          // color: Colors.white,
         ),
       ),
       backgroundColor: color,
@@ -158,10 +158,11 @@ class _ProfileState extends State<Profile> {
                 spacing: 5.0,
                 children: List.generate(this._preferences.length, (index) {
                   List<Color> colors = [
-                    Colors.greenAccent[400],
-                    Colors.cyan,
-                    Colors.indigoAccent,
-                    Colors.deepPurple
+                    // changed colors to be more pastel like in Calendar view
+                    Colors.greenAccent[200],
+                    Colors.cyan[100],
+                    Colors.indigoAccent[100],
+                    Colors.deepPurple[100]
                   ];
                   return interestChip(
                       this._preferences[index]['tag'], colors[index % 4]);
