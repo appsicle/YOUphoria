@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../login/login.dart';
 import 'package:client/http.dart';
-import 'dart:math';
 
 // TODO finalize what is going to go on this screen and DO IT
 class Profile extends StatefulWidget {

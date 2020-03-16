@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:client/http.dart';
 import '../home/home.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:convert';
 
 class NewMood extends StatelessWidget {
   final String username;
@@ -156,7 +155,6 @@ class SliderState extends State<MoodSlider> {
     }
   }
 
-  // TODO add anything additional we need to do before changing screens
   void _goToHappinessDataScreen() {
     Navigator.of(context).push(CupertinoPageRoute(
       builder: (context) => HappinessData(username: _username, token: _token),
