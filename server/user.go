@@ -18,27 +18,29 @@ import (
 
 // Profile is...
 type Profile struct {
-	ID         	primitive.ObjectID `json:"id"` 
-	UserName  	string             `json:"username" mapstructure:"username"`
-	Password  	string			   `json:"password,omitempty"`
-	Gender		string			   `json:"gender"`
-	Age		    string			   `json:"age"`
-	BirthDate	string			   `json:"birthDate"`
-	ZipCode		string			   `json:"zipcode"`
-	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
-	Calendar  	[]Mood			   `json:"calendar"`
-	CreatedOn 	string             `json:"createdOn"`
+	ID         		primitive.ObjectID `json:"id"` 
+	UserName  		string             `json:"username" mapstructure:"username"`
+	Password  		string			   `json:"password,omitempty"`
+	Gender			string			   `json:"gender"`
+	Age		    	string			   `json:"age"`
+	BirthDate		string			   `json:"birthDate"`
+	ZipCode			string			   `json:"zipcode"`
+	Preferences 	[]Preference 	   `json:"preferences" mapstructure:"preferences"`
+	LastRecommended string 	   	       `json:"lastRecommended"`
+	Calendar  		[]Mood			   `json:"calendar"`
+	CreatedOn 		string             `json:"createdOn"`
 }
 
 // SafeProfile is...
 type SafeProfile struct {
-	UserName  	string             `json:"username" mapstructure:"username"`
-	Gender		string			   `json:"gender"`
-	Age		    string			   `json:"age"`
-	BirthDate	string			   `json:"birthDate"`
-	ZipCode		string			   `json:"zipcode"`
-	Preferences []Preference 	   `json:"preferences" mapstructure:"preferences"`
-	Calendar  	[]Mood			   `json:"calendar"`
+	UserName  		string             `json:"username" mapstructure:"username"`
+	Gender			string			   `json:"gender"`
+	Age		    	string			   `json:"age"`
+	BirthDate		string			   `json:"birthDate"`
+	ZipCode			string			   `json:"zipcode"`
+	Preferences 	[]Preference 	   `json:"preferences" mapstructure:"preferences"`
+	LastRecommended string 	   	  	   `json:"lastRecommended"`
+	Calendar  		[]Mood			   `json:"calendar"`
 }
 
 /* ex:
@@ -262,8 +264,8 @@ func AddProfileDetailsEndpoint(res http.ResponseWriter, req *http.Request) {
 	id, _ := primitive.ObjectIDFromHex(reqMap["id"].(string))
 	filter := bson.M{"id": id,}
 	update := bson.M{"$set": bson.M{ "gender" : reqMap["gender"].(string), 
-										"birthday": reqMap["birthday"].(string),
-										"age" : determineAge(reqMap["birthday"].(string)),
+										"birthDate": reqMap["birthDate"].(string),
+										"age" : determineAge(reqMap["birthDate"].(string)),
 										"zipcode" : reqMap["zipcode"].(string)}}
 	_, err := ProfileCollection.UpdateOne(ctx, filter, update)
 	if err != nil {

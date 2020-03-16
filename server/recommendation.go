@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"os"
 	"math"
+	"math/rand"
 	"strconv"
 	"sort"
 
@@ -187,7 +188,7 @@ func getTopCategory(profile *SafeProfile, ctx *context.Context) (string, error) 
 		
 		total := float64(weight) + (float64(gWeight) * 0.9) + (float64(arWeight) * 0.5) + (float64(zWeight) * 0.6)
 		// fmt.Println(total, " ", )
-		if total > wmax {
+		if wmax == math.SmallestNonzeroFloat64 || (profile.LastRecommended != pref.Tag && total > wmax) {
 			wmax = total
 			tag = pref.Tag
 		}
@@ -197,6 +198,16 @@ func getTopCategory(profile *SafeProfile, ctx *context.Context) (string, error) 
 	return tag, nil
 }
 
+func updateLastRecommendedCategory(profile *SafeProfile, ctx *context.Context, category string) (error){
+	// update last recommended
+	filter := bson.M{ "username" : profile.UserName}
+	update := bson.M{ "$set": bson.M{ "lastRecommended" : category}}
+	if _, err := ProfileCollection.UpdateOne(*ctx, filter, update); err != nil{
+		return err
+	}
+	return nil
+}
+
 func buildYelpReq(profile SafeProfile, reqMap map[string]interface{}, ctx *context.Context) (YelpReq, error) {
 	var yr YelpReq
 
@@ -204,11 +215,15 @@ func buildYelpReq(profile SafeProfile, reqMap map[string]interface{}, ctx *conte
 	if err != nil {
 		return yr, err
 	}
+
+	if err = updateLastRecommendedCategory(&profile, ctx, category); err != nil {
+		return yr, err
+	}
 	yr.Categories = category
 	yr.Latitude = fmt.Sprintf("%v", reqMap["latitude"])
 	yr.Longitude = fmt.Sprintf("%v", reqMap["longitude"])
 	yr.Radius = 40000
-	yr.Limit = 1
+	yr.Limit = 10	
 	yr.StartDate = int32(time.Now().Unix())
 
 	return yr, nil
@@ -235,9 +250,13 @@ func getYelpResults(yelpreq *YelpReq, ctx *context.Context) (interface{}, error)
 
 	resMap := make(map[string]interface{})
 	if err := json.NewDecoder(yelpRes.Body).Decode(&resMap); err != nil { return nil, err }
-	
+
+	// randomizer
+	event := resMap["events"].([]interface{})[rand.Intn(int(resMap["total"].(float64)))]
+
+	log.WithFields(log.Fields{"results total": resMap["total"].(float64)}).Info()
 	log.WithFields(log.Fields{"res": resMap}).Info("GetYelpResults: it's working")
-	return resMap["events"].([]interface{})[0], nil
+	return event, nil
 }
 
 // GetRecommendationEndpoint is...

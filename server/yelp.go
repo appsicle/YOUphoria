@@ -20,7 +20,7 @@ type YelpReq struct {
 	Latitude   string		`json:"latitude"`
 	Longitude  string 		`json:"longitude"`
 	Radius 	   int			`json:"radius,omitempty"`		// max = 40000 ~25 miles
-	Limit	   int			`jons:"limit,omitempty"`		// default = 20, max = 50
+	Limit	   int			`json:"limit,omitempty"`		// default = 20, max = 50
 	SortBy	   string		`json:"sort_by,omitempty"`		// rating, distance, review_count, default = best_match
 	StartDate  int32 		`json:"start_date,omitempty"`	// unix timestamp
 }
