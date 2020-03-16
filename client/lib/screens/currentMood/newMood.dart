@@ -113,8 +113,6 @@ class SliderState extends State<MoodSlider> {
               _updateCurrentLocation(); // update current location
               String formattedDate;
               String formattedTime;
-              print(this._date);
-              print(this._time);
               if (this._date != null && this._time != null) {
                 // if we were passed in a date, we are entering a mood for the past
                 formattedDate = this._date;

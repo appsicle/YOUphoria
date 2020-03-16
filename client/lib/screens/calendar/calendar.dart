@@ -91,7 +91,6 @@ class _CalendarPageState extends State<CalendarPage>
     if (response.statusCode == 200) {
       var data = body["calendar"];
       if (data.length > 0) {
-        print(data);
         for (int i = 0; i < data.length; i++) {
           DateTime date =
               new DateFormat("yyyy-MM-dd", "en_US").parse(data[i]["date"]);
