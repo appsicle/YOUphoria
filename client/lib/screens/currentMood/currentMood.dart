@@ -44,28 +44,36 @@ class AddMood extends StatelessWidget {
           Container(
             height: 88, // estimated height of top title bar
           ),
-          MoodDisplay(token: token),
-          AddMoodButton(username: username, token: token),
+          MoodDisplay(
+            token: token,
+            circleSize: 300.0,
+          ),
+          AddMoodButton(
+            username: username,
+            token: token,
+          ),
         ]);
   }
 }
 
 class MoodDisplay extends StatefulWidget {
   final String token;
+  final double circleSize;
 
-  MoodDisplay({Key key, @required this.token}) : super(key: key);
+  MoodDisplay({Key key, @required this.token, this.circleSize})
+      : super(key: key);
 
   @override
-  _MoodDisplayState createState() => _MoodDisplayState(this.token);
+  _MoodDisplayState createState() =>
+      _MoodDisplayState(this.token, this.circleSize);
 }
 
 class _MoodDisplayState extends State<MoodDisplay> {
   List<dynamic> _todaysMoods = [];
-  String token;
+  String _token;
+  final double _circleSize;
 
-  _MoodDisplayState(token) {
-    this.token = token;
-  }
+  _MoodDisplayState(this._token, this._circleSize);
 
   @override
   void initState() {
@@ -78,7 +86,7 @@ class _MoodDisplayState extends State<MoodDisplay> {
     String formattedDate = new DateFormat("yyyy-MM-dd").format(now);
     var dateInformation = {"date": formattedDate};
     var response =
-        await postData("mood/getMoodsForDay", dateInformation, this.token);
+        await postData("mood/getMoodsForDay", dateInformation, this._token);
     var body = jsonDecode(response.body);
     if (response.statusCode == 200) {
       if (body["calendar"].length > 0) {
@@ -151,8 +159,8 @@ class _MoodDisplayState extends State<MoodDisplay> {
     return Expanded(
       child: Center(
         child: Container(
-          width: 300.0,
-          height: 300.0,
+          width: this._circleSize,
+          height: this._circleSize,
           decoration: new BoxDecoration(
             shape: BoxShape.circle,
             boxShadow: [

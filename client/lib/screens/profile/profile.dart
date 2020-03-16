@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../login/login.dart';
 import 'package:client/http.dart';
+import '../currentMood/currentMood.dart';
 
-// TODO finalize what is going to go on this screen and DO IT
 class Profile extends StatefulWidget {
   final String username;
   final String token;
@@ -17,15 +17,15 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  String token;
-  String username;
-  String gender = "";
-  String age = "";
-  String birthDate = "";
-  String zipcode = "";
-  var preferences = [];
+  String _token;
+  String _username;
+  String _gender = "";
+  String _age = "";
+  String _birthDate = "";
+  String _zipcode = "";
+  var _preferences = [];
 
-  _ProfileState(this.username, this.token);
+  _ProfileState(this._username, this._token);
 
   @override
   void initState() {
@@ -34,34 +34,68 @@ class _ProfileState extends State<Profile> {
   }
 
   void getProfile() async {
-    var response = await getData('profile/getProfile', this.token);
+    var response = await getData('profile/getProfile', this._token);
     if (response.statusCode != 200) {
       print('failed to get user profile.');
       return;
     }
     var body = decodeBody(response.body);
     setState(() {
-      this.gender = body['gender'];
-      this.age = body['age'];
-      this.birthDate = body['birthDate'];
-      this.zipcode = body['zipcode'];
-      this.preferences = body['preferences'];
+      this._gender = body['gender'] == "" ? "N/A" : body['gender'];
+      this._age = body['age'] == "" ? "N/A" : body['age'];
+      this._birthDate = body['birthDate'] == "" ? "N/A" : body['birthDate'];
+      this._zipcode = body['zipcode'] == "" ? "N/A" : body['zipcode'];
+      this._preferences = body['preferences'];
+      this._preferences.sort((a, b) {
+        // sort the prefered activities/interests based on weights
+        int c = int.parse(a["weight"]);
+        int d = int.parse(b["weight"]);
+        return (c < d) ? 1 : 0;
+      });
     });
   }
 
-  Container profileData(data) {
-    return Container(
-      decoration: new BoxDecoration(
-        border: new Border(
-          bottom: new BorderSide(
-            color: Colors.grey[300],
-            width: 3.0,
-            style: BorderStyle.solid,
-          ),
+  Chip interestChip(interest, color) {
+    return Chip(
+      elevation: 5,
+      label: new Text(
+        interest,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          color: Colors.white,
         ),
       ),
-      padding: EdgeInsets.all(25.0),
-      child: Text(data),
+      backgroundColor: color,
+    );
+  }
+
+  Widget _buildStatItem(String label, String count) {
+    TextStyle _statLabelTextStyle = TextStyle(
+      fontFamily: 'Roboto',
+      color: Colors.black,
+      fontSize: 16.0,
+      fontWeight: FontWeight.w200,
+    );
+
+    TextStyle _statCountTextStyle = TextStyle(
+      color: Colors.black,
+      fontSize: 20.0,
+      fontWeight: FontWeight.bold,
+    );
+
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(
+          count,
+          style: _statCountTextStyle,
+        ),
+        Text(
+          label,
+          style: _statLabelTextStyle,
+        ),
+      ],
     );
   }
 
@@ -77,24 +111,64 @@ class _ProfileState extends State<Profile> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
+            Container(
+              height: 30, // space out for top part of screen
+            ),
+            MoodDisplay(
+              token: this._token,
+              circleSize: 100.0,
+            ),
+            Container(
+              padding: EdgeInsets.all(10.0),
               child: Center(
                 child: Text(
-                  this.widget.username,
+                  this._username,
                   textAlign: TextAlign.left,
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 30,
+                  ),
                 ),
               ),
             ),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.all(0.0),
-                children: List.generate(this.preferences.length, (index) {
-                  return profileData(this.preferences[index]['tag']);
+            Container(
+              padding: EdgeInsets.all(20.0),
+              decoration: new BoxDecoration(
+                border: new Border(
+                  bottom: new BorderSide(
+                    color: Colors.grey[300],
+                    width: 2.0,
+                    style: BorderStyle.solid,
+                  ),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: <Widget>[
+                  _buildStatItem("Gender", this._gender),
+                  _buildStatItem("Birthday", this._birthDate),
+                  _buildStatItem("Age", this._age),
+                  _buildStatItem("Zipcode", this._zipcode),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.all(20.0),
+              child: Wrap(
+                spacing: 5.0,
+                children: List.generate(this._preferences.length, (index) {
+                  List<Color> colors = [
+                    Colors.greenAccent[400],
+                    Colors.cyan,
+                    Colors.indigoAccent,
+                    Colors.deepPurple
+                  ];
+                  return interestChip(
+                      this._preferences[index]['tag'], colors[index % 4]);
                 }),
               ),
             ),
-            Expanded(
+            Container(
               child: Center(
                 child: RaisedButton(
                   color: Colors.indigoAccent,
@@ -105,7 +179,7 @@ class _ProfileState extends State<Profile> {
                     prefs.remove('username');
                     prefs.remove('token');
 
-                    var response = await getData('profile/logout', this.token);
+                    var response = await getData('profile/logout', this._token);
                     if (response.statusCode != 200) {
                       print("Logout failed.");
                     }
@@ -123,6 +197,10 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
             ),
+            Expanded(
+              child: Container(),
+            ),
+            Container(height: 80), // cover the bottom part of screen
           ],
         ),
       ),
