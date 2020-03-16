@@ -11,8 +11,15 @@ import 'package:url_launcher/url_launcher.dart';
 class NewMood extends StatelessWidget {
   final String username;
   final String token;
+  final String date;
+  final String time;
 
-  NewMood({Key key, @required this.username, @required this.token})
+  NewMood(
+      {Key key,
+      @required this.username,
+      @required this.token,
+      this.date,
+      this.time})
       : super(key: key);
 
   @override
@@ -29,7 +36,7 @@ class NewMood extends StatelessWidget {
               child: Moods(),
             ),
             Container(
-              child: MoodSlider(username, token),
+              child: MoodSlider(username, token, date, time),
             ),
           ],
         ),
@@ -42,11 +49,13 @@ class NewMood extends StatelessWidget {
 class MoodSlider extends StatefulWidget {
   final String _username;
   final String _token;
+  final String _date;
+  final String _time;
 
-  MoodSlider(this._username, this._token);
+  MoodSlider(this._username, this._token, this._date, this._time);
 
   @override
-  SliderState createState() => SliderState(_username, _token);
+  SliderState createState() => SliderState(_username, _token, _date, _time);
 }
 
 class SliderState extends State<MoodSlider> {
@@ -55,13 +64,15 @@ class SliderState extends State<MoodSlider> {
   Color _moodColor = Colors.cyan;
   final String _username;
   final String _token;
+  final String _date;
+  final String _time;
   Position _currentPosition;
   String _currentMood =
       "okay"; // todo eventually will be used when sending data to backend
   var _event = {};
   String _recommendationCategory = "";
 
-  SliderState(this._username, this._token);
+  SliderState(this._username, this._token, this._date, this._time);
 
   @override
   void initState() {
@@ -100,9 +111,20 @@ class SliderState extends State<MoodSlider> {
             borderRadius: BorderRadius.circular(15.0),
             onPressed: () async {
               _updateCurrentLocation(); // update current location
-              var now = new DateTime.now();
-              String formattedDate = new DateFormat("yyyy-MM-dd").format(now);
-              String formattedTime = new DateFormat("HH:mm:ss").format(now);
+              String formattedDate;
+              String formattedTime;
+              print(this._date);
+              print(this._time);
+              if (this._date != null && this._time != null) {
+                // if we were passed in a date, we are entering a mood for the past
+                formattedDate = this._date;
+                formattedTime = this._time;
+              } else {
+                var now = new DateTime.now();
+                formattedDate = new DateFormat("yyyy-MM-dd").format(now);
+                formattedTime = new DateFormat("HH:mm:ss").format(now);
+              }
+
               var moodInformation = {
                 "mood": this._currentMood,
                 "date": formattedDate,

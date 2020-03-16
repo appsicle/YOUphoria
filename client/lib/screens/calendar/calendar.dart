@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:client/http.dart';
 import 'dart:convert';
+import '../currentMood/newMood.dart';
+import '../home/home.dart';
 
 // Example holidays
 final Map<DateTime, List> _holidays = {
@@ -48,7 +50,7 @@ class CalendarPage extends StatefulWidget {
   final String token;
 
   @override
-  _CalendarPageState createState() => _CalendarPageState(token);
+  _CalendarPageState createState() => _CalendarPageState(username, token);
 }
 
 class _CalendarPageState extends State<CalendarPage>
@@ -58,8 +60,10 @@ class _CalendarPageState extends State<CalendarPage>
   AnimationController _animationController;
   CalendarController _calendarController;
   final String _token;
+  final String _username;
+  String _selectedDay;
 
-  _CalendarPageState(this._token);
+  _CalendarPageState(this._username, this._token);
 
   @override
   void initState() {
@@ -86,10 +90,14 @@ class _CalendarPageState extends State<CalendarPage>
     if (response.statusCode == 200) {
       var data = body["calendar"];
       if (data.length > 0) {
+        print(data);
         for (int i = 0; i < data.length; i++) {
           DateTime date =
               new DateFormat("yyyy-MM-dd", "en_US").parse(data[i]["date"]);
-          String mood = data[i]["mood"] + " at " + data[i]["time"];
+          String mood = data[i]["mood"] +
+              " at " +
+              data[i][
+                  "time"]; // default time in case there was no time for the mood entered
           if (dataFromServer[date] == null) {
             dataFromServer[date] = [mood];
           } else {
@@ -113,6 +121,7 @@ class _CalendarPageState extends State<CalendarPage>
   void _onDaySelected(DateTime day, List events) {
     setState(() {
       _selectedMoods = events;
+      _selectedDay = DateFormat("yyyy-MM-dd", "en_US").format(day);
     });
   }
 
@@ -165,17 +174,43 @@ class _CalendarPageState extends State<CalendarPage>
   }
 
   Widget _buildEventList() {
+    List<dynamic> moodsList =
+        _selectedMoods.map((event) => SelectedMoodWidget(event, null)).toList();
+
+    void addMood() {
+      // navigate to add mood page and provide date and time
+      print(_selectedDay);
+      Navigator.of(context).push(CupertinoPageRoute(
+        builder: (context) => NewMood(
+            username: _username,
+            token: _token,
+            date: _selectedDay,
+            time: "12:00:00"), // default time is 12:00:00
+      ));
+    }
+
+    SelectedMoodWidget addMoodOnSelectedDayButton =
+        SelectedMoodWidget("Add a Mood for this Day", addMood);
+    DateTime selectedDateTime =
+        new DateFormat("yyyy-MM-dd", "en_US").parse(_selectedDay);
+
+    // only add option to add mood if the date is before today or is today
+    if (selectedDateTime.isBefore(DateTime.now()) ||
+        selectedDateTime.isAtSameMomentAs(DateTime.now())) {
+      moodsList.add(addMoodOnSelectedDayButton);
+    }
+
     return ListView(
-      children:
-          _selectedMoods.map((event) => SelectedMoodWidget(event)).toList(),
+      children: moodsList,
     );
   }
 }
 
 class SelectedMoodWidget extends StatelessWidget {
   final String _mood;
+  Function _onTap;
 
-  SelectedMoodWidget(this._mood);
+  SelectedMoodWidget(this._mood, this._onTap);
 
   Color _getColor() {
     if (this._mood.contains("amazing")) {
@@ -189,7 +224,7 @@ class SelectedMoodWidget extends StatelessWidget {
     } else if (this._mood.contains("horrible")) {
       return Colors.deepPurpleAccent[100];
     } else {
-      return Colors.white;
+      return Colors.grey[400];
     }
   }
 
@@ -208,7 +243,7 @@ class SelectedMoodWidget extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        onTap: null,
+        onTap: this._onTap,
       ),
     );
   }
