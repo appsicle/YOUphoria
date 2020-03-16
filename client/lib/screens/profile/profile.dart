@@ -116,7 +116,7 @@ class _ProfileState extends State<Profile> {
             ),
             MoodDisplay(
               token: this._token,
-              circleSize: 100.0,
+              circleSize: 140.0,
             ),
             Container(
               padding: EdgeInsets.all(10.0),
