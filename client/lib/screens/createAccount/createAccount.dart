@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'userInterests.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:client/http.dart';
 
 class CreateAccount extends StatefulWidget {
   final String username;
@@ -20,7 +21,7 @@ class _CreateAccountState extends State<CreateAccount> {
   final String _username;
   final String _token;
   final format = DateFormat("yyyy-MM-dd");
-  String _birthday = DateFormat("yyyy-MM-dd").format(DateTime.now());
+  String _birthDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
   String _gender = "male";
   final zipcodeController = TextEditingController();
 
@@ -105,7 +106,6 @@ class _CreateAccountState extends State<CreateAccount> {
                       onChanged: (newValue) {
                         setState(() {
                           _gender = newValue;
-                          print(_gender);
                         });
                       }),
                 ),
@@ -124,7 +124,7 @@ class _CreateAccountState extends State<CreateAccount> {
                   ),
                   MaterialButton(
                     child: Text(
-                      "$_birthday",
+                      "$_birthDate",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.white,
@@ -148,7 +148,7 @@ class _CreateAccountState extends State<CreateAccount> {
                               initialDateTime: DateTime.now(),
                               onDateTimeChanged: (DateTime date) {
                                 setState(() {
-                                  _birthday =
+                                  _birthDate =
                                       DateFormat("yyyy-MM-dd").format(date);
                                 });
                               },
@@ -191,23 +191,34 @@ class _CreateAccountState extends State<CreateAccount> {
                 minWidth: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                 onPressed: () async {
-                  // TODO use API call endpoint to send them info of gender, birthday, and zipcode
                   String zipcode = zipcodeController.text.trim();
-                  print(zipcode);
-                  print(_gender);
-                  print(_birthday);
                   SharedPreferences prefs =
                       await SharedPreferences.getInstance();
-                  prefs.remove('createAccount');
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext ctx) => new UserInterests(
-                        username: _username,
-                        token: _token,
+
+                  var userProfileInformation = {
+                    "birthDate": _birthDate,
+                    "gender": _gender,
+                    "zipcode":
+                        zipcode // it is possible for them to enter "" for zipcode, backend handles this
+                  };
+
+                  var response = await postData("profile/addProfileDetails",
+                      userProfileInformation, this._token);
+                  if (response.statusCode == 200) {
+                    prefs.remove(
+                        'createAccount'); // only remove this if they were able to addProfileDetails successfully
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext ctx) => new UserInterests(
+                          username: _username,
+                          token: _token,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    print("failed to add user profile");
+                  }
                 },
                 child: Text("Submit",
                     textAlign: TextAlign.center,

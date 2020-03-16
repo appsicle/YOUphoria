@@ -100,19 +100,20 @@ class _UserInterestsState extends State<UserInterests> {
                             "recommendation/sendUserInterests",
                             {'interests': _selectedActivities},
                             _token);
-                        if (response.statusCode != 200) {
-                          print('failed to send user interests.');
-                        }
-
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
-                        prefs.remove("userInterests");
 
-                        Navigator.of(context, rootNavigator: true)
-                            .pushReplacement(MaterialPageRoute(
-                                builder: (BuildContext ctx) => new Home(
-                                    username: this._username,
-                                    token: this._token)));
+                        if (response.statusCode == 200) {
+                          prefs.remove(
+                              "userInterests"); // only remove this if they were able to addProfileDetails successfully
+                          Navigator.of(context, rootNavigator: true)
+                              .pushReplacement(MaterialPageRoute(
+                                  builder: (BuildContext ctx) => new Home(
+                                      username: this._username,
+                                      token: this._token)));
+                        } else {
+                          print('failed to send user interests.');
+                        }
                       }
                     : null,
                 child: Text('Confirm Selection'),
