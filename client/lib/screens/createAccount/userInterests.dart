@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../home/home.dart';
 import '../currentMood/happinessData.dart';
 import 'package:client/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInterests extends StatefulWidget {
   final String username;
@@ -24,6 +25,17 @@ class _UserInterestsState extends State<UserInterests> {
   List<String> _selectedActivities = [];
   final List<String> _possibleActivities =
       HappinessData.getPossibleActivities();
+
+  @override
+  void initState() {
+    setCurrentStateOfScreen();
+    super.initState();
+  }
+
+  void setCurrentStateOfScreen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("userInterests", "true");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +103,10 @@ class _UserInterestsState extends State<UserInterests> {
                         if (response.statusCode != 200) {
                           print('failed to send user interests.');
                         }
+
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        prefs.remove("userInterests");
 
                         Navigator.of(context, rootNavigator: true)
                             .pushReplacement(MaterialPageRoute(

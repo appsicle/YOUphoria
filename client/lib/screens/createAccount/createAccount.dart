@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'userInterests.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateAccount extends StatefulWidget {
   final String username;
@@ -24,6 +25,17 @@ class _CreateAccountState extends State<CreateAccount> {
   final zipcodeController = TextEditingController();
 
   _CreateAccountState(this._username, this._token);
+
+  @override
+  void initState() {
+    setCurrentStateOfScreen();
+    super.initState();
+  }
+
+  void setCurrentStateOfScreen() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("createAccount", "true");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -184,6 +196,9 @@ class _CreateAccountState extends State<CreateAccount> {
                   print(zipcode);
                   print(_gender);
                   print(_birthday);
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.remove('createAccount');
                   Navigator.push(
                     context,
                     MaterialPageRoute(
