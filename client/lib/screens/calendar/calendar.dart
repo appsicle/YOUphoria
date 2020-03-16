@@ -8,7 +8,6 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:client/http.dart';
 import 'dart:convert';
 import '../currentMood/newMood.dart';
-import '../home/home.dart';
 
 // Example holidays
 final Map<DateTime, List> _holidays = {
@@ -210,7 +209,7 @@ class _CalendarPageState extends State<CalendarPage>
 
 class SelectedMoodWidget extends StatelessWidget {
   final String _mood;
-  Function _onTap;
+  final Function _onTap;
 
   SelectedMoodWidget(this._mood, this._onTap);
 
