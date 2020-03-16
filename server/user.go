@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
-	// "strings"
+	"strings"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/google/uuid"
@@ -243,6 +244,37 @@ func UpdateProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	log.WithFields(log.Fields{}).Info("UpdateProfileEndpoint: outgoing result")
 }
 
+// AddProfileDetailsEndpoint is...
+func AddProfileDetailsEndpoint(res http.ResponseWriter, req *http.Request) {
+	res.Header().Set("content-type", "applications/json")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// map req body
+	reqMap := make(map[string]interface{})
+	if err := json.NewDecoder(req.Body).Decode(&reqMap); err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.WithFields(log.Fields{"req body": reqMap,}).Info("AddProfileDetailsEndpoint: incoming request")
+
+	// update profile
+	id, _ := primitive.ObjectIDFromHex(reqMap["id"].(string))
+	filter := bson.M{"id": id,}
+	update := bson.M{"$set": bson.M{ "gender" : reqMap["gender"].(string), 
+										"birthday": reqMap["birthday"].(string),
+										"age" : determineAge(reqMap["birthday"].(string)),
+										"zipcode" : reqMap["zipcode"].(string)}}
+	_, err := ProfileCollection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		res.WriteHeader(http.StatusInternalServerError)
+		res.Write([]byte(`{ "message": "` + err.Error() + `"}`))
+		return
+	}
+
+	log.WithFields(log.Fields{}).Info("AddProfileDetailsEndpoint: outgoing result")
+}
+
 // DeleteProfileEndpoint is...
 func DeleteProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	res.Header().Set("content-type", "applications/json")
@@ -275,4 +307,20 @@ func DeleteProfileEndpoint(res http.ResponseWriter, req *http.Request) {
 	}
 
 	log.WithFields(log.Fields{}).Info("DeleteProfileEndpoint: outgoing result")
+}
+
+func determineAge(birthday string) (string){
+	if birthday == "" {
+		return "-1"
+	}
+	// "1999-11-02" -> 20
+	birthdaySlice := strings.Split(birthday, "-")
+
+	birthdayDate := time.Date(atoi(birthdaySlice[0]), 
+						time.Month(atoi(birthdaySlice[1])), 
+						atoi(birthdaySlice[2]), 0, 0, 0, 0, time.UTC)
+
+	diff := int(time.Now().Sub(birthdayDate).Hours())
+
+	return strconv.Itoa(diff/8760)
 }
